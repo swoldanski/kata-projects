@@ -1,5 +1,18 @@
 ## [Unreleased]
 
+## [0.3.2] - 2026-10-02
+
+### Added
+- **Kata02: Karate Chop** — 5 unique binary search implementations:
+  - Iterative (traditional low/high pointers)
+  - Recursive (divide and conquer)
+  - Functional (array slices with offset tracking)
+  - Built-in (Python's bisect module)
+  - Tail-recursive (recursive call as last operation)
+  - Full DDD/CQRS/Repository architecture with search history tracking
+  - 47 comprehensive tests covering all algorithms, edge cases, TDD progression
+  - Search history tracking and statistics per algorithm
+
 ## [0.3.1] - 2026-10-02
 
 ### Added
