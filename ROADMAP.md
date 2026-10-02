@@ -35,10 +35,10 @@ binding rules.
 - **Kata02: Karate Chop** — 5 unique binary search implementations (iterative, recursive, functional, built-in, tail-recursive), 47 tests passing
 - **Kata03: How Big? How Fast?** — Estimation calculator for bits, storage, time with 32 tests passing
 - **Kata04: Data Munging** — Weather/soccer data parsing with DRY fusion, 32 tests passing
+- **Kata05: Bloom Filters** — Probabilistic set membership with MD5/SHA256/FNV/double hashing, 43 tests passing
 
 ## Backlog
 
-- Kata05: Bloom Filters - Python implementation
 - Kata06: Anagrams - Python implementation
 - Kata07: How'd I Do? - Python implementation
 - Kata08: Conflicting Objectives - Python implementation

@@ -134,7 +134,8 @@ def test_template_files_have_correct_structure():
                         "test_simple_pricing", "test_volume_pricing", "test_weight_pricing",
                         "test_buy_n_get_m", "test_tdd_step",
                         "test_estimate_bits", "test_town_records", "test_binary_tree",
-                        "test_modem_transfer", "test_binary_search", "test_password"
+                        "test_modem_transfer", "test_binary_search", "test_password",
+                        "test_config_optimal", "test_bloom"
                     ])
                     assert has_test_methods, f"Missing test methods in {test_files[0]}"
 

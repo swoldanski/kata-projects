@@ -1,5 +1,16 @@
 ## [Unreleased]
 
+## [0.3.5] - 2026-10-02
+
+### Added
+- **Kata05: Bloom Filters** — Probabilistic set membership with tunable false-positive rate:
+  - `BloomFilterConfig` computing optimal bit-array size `m` and hash count `k` from desired n and p
+  - Hash functions: MD5, SHA256, FNV-1a, and double hashing (`h_i(x) = (h1(x) + i·h2(x)) mod m`)
+  - Full DDD/CQRS/Repository architecture with `InMemoryBloomFilterRepository`
+  - Statistics: elements added, estimated false-positive rate, fill ratio
+  - Functional interface with `create_bloom_filter(n, p)` factory, `in` operator, multi-item ops
+  - 43 comprehensive tests covering config, hashing, membership, statistics, and architecture patterns
+
 ## [0.3.4] - 2026-10-02
 
 ### Added
