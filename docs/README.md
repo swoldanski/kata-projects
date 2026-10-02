@@ -122,7 +122,7 @@ Each test file has three test methods:
 # Already configured with uv
 uv sync          # Install dependencies
 uv run pytest    # Run tests
-uv run ruff .    # Lint
+uv run ruff check .    # Lint
 uv run mypy .    # Type check
 ```
 
@@ -161,8 +161,8 @@ Source: [codekata.com](http://codekata.com)
 | 03 | How Big? How Fast? | Estimation |
 | 04 | Data Munging | File parsing + DRY |
 | 05 | Bloom Filters | Probabilistic DS |
-| 06 | Anagrams | Dictionary grouping |
-| 07 | How'd I Do? | Quiz scoring |
+| 06 | Anagrams | Dictionary grouping (implemented) |
+| 07 | How'd I Do? | Quiz scoring (implemented) |
 | 08 | Conflicting Objectives | Tradeoff analysis |
 | 09 | Back to the Checkout | Checkout system |
 | 10 | Hashes vs Classes | Data vs behavior |

@@ -33,7 +33,7 @@ Editing → edit → Update After Editing → Closeout).
 
 - Run catalog tests: `uv run pytest tests/ -v`
 - Run kata tests: `uv run pytest <collection>/<kata>/ -v`
-- Lint: `uv run ruff .`
+- Lint: `uv run ruff check .`
 - Type check: `uv run mypy .`
 
 ## Child aSDLC Index

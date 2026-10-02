@@ -253,7 +253,7 @@ Follows [Keep a Changelog](https://keepachangelog.com) + SemVer.
 
 ### Current Version
 
-**v0.1.0** — Initial scaffold with 49 katas, templates, tests
+**v0.3.7** — Latest release; katas 01-07 implemented on the aSDLC baseline (v0.1.0 scaffolded all 49 katas and templates)
 
 ---
 
@@ -274,7 +274,7 @@ Follows [Keep a Changelog](https://keepachangelog.com) + SemVer.
 |------|-----------|---------|
 | Update dependencies | Monthly | `uv sync --upgrade` |
 | Run all tests | Before commit | `uv run pytest tests/` |
-| Lint | Before commit | `uv run ruff .` |
+| Lint | Before commit | `uv run ruff check .` |
 | Type check | Before commit | `uv run mypy .` |
 | Regenerate templates | After adding katas | `python3.12 generate_templates.py` |
 

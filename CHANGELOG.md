@@ -1,5 +1,25 @@
 ## [Unreleased]
 
+### Changed
+- Repository-wide hygiene baseline: `ruff check .` and `mypy .` now pass across all 100 source files
+  - Fixed the documented-but-broken lint invocation (`ruff .` → `ruff check .`) everywhere it appeared
+  - Migrated the deprecated top-level ruff settings into `[tool.ruff.lint]`
+  - Fixed two latent bugs found by the checkers: `Money.__mul__` now accepts `Decimal` weight quantities, and `find_min_spread_generic` calls the real `parse_lines` parser method
+
+## [0.3.7] - 2026-10-02
+
+### Added
+- **Kata07: How'd I Do?** — Quiz scoring system:
+  - Five question types: multiple choice, true/false, short answer, numeric range, bonus
+  - Answer matching rules: case-sensitive by default, optional case-insensitive matching for short answers, partial credit for answers containing the key
+  - Numeric-range questions scale credit by closeness inside the interval
+  - Weighted questions and bonus questions that add points on top of the base total
+  - `ScoreReport` aggregate with per-question `QuestionResult`s and a detailed report listing every question not fully correct
+  - Grading scales: percentage, letter grade (customisable boundaries) and 4.0 GPA
+  - Full DDD/CQRS/Repository architecture with `InMemoryQuizRepository`
+  - Functional interface (`score_quiz`, `score_percentage`, `letter_grade`, `build_quiz`)
+  - 32 tests covering question types, scoring rules, grading scales, architecture and large-quiz scale
+
 ## [0.3.6] - 2026-10-02
 
 ### Added

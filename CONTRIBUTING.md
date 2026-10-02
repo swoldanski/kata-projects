@@ -96,14 +96,14 @@ This project uses the following verification checks (defined in `tests/AGENTS.md
   - Validates kata structure, README format, template files, no duplicates
 - **Kata tests**: `uv run pytest <collection>/<kata>/ -v`
   - Behavioral tests for each implemented kata
-- **Lint**: `uv run ruff .`
+- **Lint**: `uv run ruff check .`
 - **Type check**: `uv run mypy .`
 
 Before committing, run all verification:
 ```bash
 uv run pytest tests/ -v
 uv run pytest dave-thomas-codekata/ gaurav-arora-tdd-katas/ wonderland-clojure-katas/ sensiolabs-poledev-katas/ -v
-uv run ruff .
+uv run ruff check .
 uv run mypy .
 ```
 
