@@ -1,0 +1,45 @@
+## [Unreleased]
+
+## [0.3.1] - 2026-10-02
+
+### Added
+- **Kata01: Supermarket Pricing** — Full Python implementation following DDD/CQRS/Repository patterns with in-memory state
+  - Value Objects: `Money` (Decimal with rounding), `Quantity` (with units)
+  - Entities: `Product` (aggregate root), `PricingRule` (value object)
+  - Repository: `InMemoryProductRepository` (dict-based, no external persistence)
+  - Domain Service: `PricingService` (price calculation logic)
+  - CQRS: `ProductCommandHandler` (writes) + `ProductQueryHandler` (reads)
+  - Facade: `PricingEngine` (main entry point)
+  - Four pricing types: Simple, Volume (N for $X), Weight ($X/lb), Buy N Get M Free
+  - 36 comprehensive tests covering all pricing scenarios, edge cases, and architecture patterns
+  - Design document function: `design_pricing_model()`
+
+## [0.3.0] - 2026-10-02
+
+### Added
+- **Backlog populated** — All 49 katas added to ROADMAP.md backlog with proper names from README.md titles (e.g., "Kata01: Supermarket Pricing", "String Calculator Kata (via Roy Osherove)", "Alphabet Cipher", "Kata 1: Data Transformer")
+- **Kata names standardized** — Backlog entries now match exact `# ` headings from each kata's README.md
+
+## [0.2.0] - 2026-10-02
+
+### Added
+- **User Manual** (`docs/README.md`) — How to pick katas, TDD workflow, language setup, collections overview
+- **DevSecOps Manual** (`architecture/README.md`) — Repository structure, aSDLC governance, testing philosophy, Python tooling, template generation, release process
+- **Enhanced Catalog Tests** (`tests/test_catalog.py`) — 8 tests: structure, templates, README format consistency
+- **Code Examples** — All 49 kata READMEs now have `## Examples` with runnable Python snippets
+- **Python starter templates** for all 49 katas (DDD/CQRS/Repository + in-memory, with failing tests)
+- **Backlog completed** — All 4 original backlog items implemented and verified
+
+## [0.1.0] - 2026-10-02
+
+### Added
+- **Implementation Preferences** in `AGENTS.md` — DDD, CQRS, Repository pattern, and in-memory state as preferred architectural patterns for kata solutions contributed to this repository.
+- Four kata collections scaffolded with 49 total katas:
+  - Dave Thomas CodeKata (21 katas)
+  - Gaurav Arora TDD Katas (16 katas)
+  - Wonderland Clojure Katas (7 katas)
+  - SensioLabs PoleDev Katas (5 katas)
+- aSDLC framework baseline (AGENTS.md, ROADMAP.md, CHANGELOG.md, CONTRIBUTING.md, LICENSE)
+- Python tooling via uv (pytest, ruff, mypy)
+- Catalog verification tests (5 tests passing)
+- Repository structure following aSDLC conventions
