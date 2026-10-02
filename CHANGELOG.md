@@ -1,5 +1,17 @@
 ## [Unreleased]
 
+## [0.3.8] - 2026-10-02
+
+### Added
+- **Kata08: Conflicting Objectives** — Cache eviction strategies benchmarked against each other:
+  - Three interchangeable policies behind one `EvictionStrategy` protocol: LRU (recency log), LFU (per-key counts) and ARC (adaptive between the two)
+  - `Cache` aggregate that delegates eviction to the injected strategy, with capacities, hit/miss counting and eviction tracking
+  - A benchmark replaying an access trace as a user would (look up, store on a miss) and measuring hit rate, misses, evictions and throughput
+  - `Tradeoff` verdicts and a `Recommendation` decision guide showing that no policy is best everywhere: on the bursty trace LFU/ARC reach 45% against LRU's 40%, while on an interleaved trace all three tie
+  - Full DDD/CQRS/Repository architecture with `InMemoryBenchmarkRepository`
+  - Functional interface (`simulate`, `compare`, `best_policy`, `analyze_tradeoffs`)
+  - 41 tests covering policy behaviour, metrics, tradeoff analysis, architecture and long traces
+
 ### Changed
 - Repository-wide hygiene baseline: `ruff check .` and `mypy .` now pass across all 100 source files
   - Fixed the documented-but-broken lint invocation (`ruff .` → `ruff check .`) everywhere it appeared

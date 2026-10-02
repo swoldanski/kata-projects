@@ -38,10 +38,10 @@ binding rules.
 - **Kata05: Bloom Filters** — Probabilistic set membership with MD5/SHA256/FNV/double hashing, 43 tests passing
 - **Kata06: Anagrams** — Anagram grouping with four signature strategies (sorted/prime/count/counter), 20 tests passing
 - **Kata07: How'd I Do?** — Quiz scoring with five question types, partial credit, weighted and bonus questions, reports and grading scales, 32 tests passing
+- **Kata08: Conflicting Objectives** — Interchangeable cache eviction strategies (LRU/LFU/ARC) benchmarked against each other, with measured tradeoffs and a decision guide, 41 tests passing
 
 ## Backlog
 
-- Kata08: Conflicting Objectives - Python implementation
 - Kata09: Back to the Checkout - Python implementation
 - Kata10: Hashes vs. Classes - Python implementation
 - Kata11: Sorting It Out - Python implementation

@@ -253,7 +253,7 @@ Follows [Keep a Changelog](https://keepachangelog.com) + SemVer.
 
 ### Current Version
 
-**v0.3.7** — Latest release; katas 01-07 implemented on the aSDLC baseline (v0.1.0 scaffolded all 49 katas and templates)
+**v0.3.8** — Latest release; katas 01-08 implemented on the aSDLC baseline (v0.1.0 scaffolded all 49 katas and templates)
 
 ---
 

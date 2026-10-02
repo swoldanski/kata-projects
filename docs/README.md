@@ -163,7 +163,7 @@ Source: [codekata.com](http://codekata.com)
 | 05 | Bloom Filters | Probabilistic DS |
 | 06 | Anagrams | Dictionary grouping (implemented) |
 | 07 | How'd I Do? | Quiz scoring (implemented) |
-| 08 | Conflicting Objectives | Tradeoff analysis |
+| 08 | Conflicting Objectives | Tradeoff analysis (implemented) |
 | 09 | Back to the Checkout | Checkout system |
 | 10 | Hashes vs Classes | Data vs behavior |
 | 11 | Sorting It Out | 8 sorting algorithms |

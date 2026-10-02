@@ -32,7 +32,7 @@
 
 - Run catalog tests: `uv run pytest tests/ -v`
 - Run all kata tests: `uv run pytest dave-thomas-codekata/ gaurav-arora-tdd-katas/ wonderland-clojure-katas/ sensiolabs-poledev-katas/ -v`
-- Lint test files: `uv run ruff tests/`
+- Lint test files: `uv run ruff check tests/`
 
 ## Child aSDLC Index
 
