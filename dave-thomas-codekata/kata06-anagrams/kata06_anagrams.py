@@ -1,32 +1,416 @@
-"""kata06-anagrams - Anagrams - Group words by anagram
+"""kata06-anagrams - Anagrams
 
-Source: See README.md
+Group words into anagram sets (words sharing the same letter multiset).
+
+Source: http://codekata.com/kata/kata06-anagrams/
+
+Architecture: DDD + CQRS + Repository, in-memory state only.
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
+from __future__ import annotations
+
+import time
+from abc import ABC, abstractmethod
+from collections import Counter
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Dict, List, Optional, Protocol, Set, Tuple
 
 
-# TODO: Implement the kata here
-# Follow DDD, CQRS, Repository patterns with in-memory state
-# No database, no ORM, no external persistence
-# Use domain entities, value objects, aggregates, domain services
-# Separate commands (writes) from queries (reads)
-# Abstract data access behind repository interfaces
-# Use in-memory collections (lists, dicts, sets) for state
+# =============================================================================
+# Value Objects
+# =============================================================================
 
+class SignatureStrategy(Enum):
+    """Ways to derive an order-independent signature for a word."""
+    SORTED = "sorted"           # sort the letters
+    PRIME = "prime"             # product of per-letter primes
+    COUNT = "count"             # 26-element letter counts
+    FROZEN_COUNTER = "frozen"   # frozen Counter of letters
+
+
+_PRIME_BY_LETTER: Dict[str, int] = {}
+_PRIMES = [
+    2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47,
+    53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101,
+]
+for _i, _ch in enumerate("abcdefghijklmnopqrstuvwxyz"):
+    _PRIME_BY_LETTER[_ch] = _PRIMES[_i]
+
+
+@dataclass(frozen=True)
+class Word:
+    """A word, normalized for anagram comparison."""
+    text: str
+
+    def __post_init__(self) -> None:
+        if not self.text:
+            raise ValueError("Word cannot be empty")
+
+    @property
+    def normalized(self) -> str:
+        """Lower-cased form used for signature generation."""
+        return self.text.lower()
+
+    @property
+    def length(self) -> int:
+        return len(self.text)
+
+    def signature(self, strategy: SignatureStrategy = SignatureStrategy.SORTED) -> str:
+        """Order-independent signature for grouping anagrams."""
+        w = self.normalized
+        if strategy is SignatureStrategy.SORTED:
+            return "".join(sorted(w))
+        if strategy is SignatureStrategy.PRIME:
+            product = 1
+            for ch in w:
+                prime = _PRIME_BY_LETTER.get(ch)
+                if prime is None:
+                    # non a-z characters cannot be prime-encoded; fall back
+                    return "".join(sorted(w))
+                product *= prime
+            return str(product)
+        if strategy is SignatureStrategy.COUNT:
+            counts = [0] * 26
+            for ch in w:
+                idx = ord(ch) - ord("a")
+                if 0 <= idx < 26:
+                    counts[idx] += 1
+            return ",".join(str(c) for c in counts)
+        if strategy is SignatureStrategy.FROZEN_COUNTER:
+            return repr(sorted(Counter(w).items()))
+        raise ValueError(f"Unknown strategy: {strategy}")
+
+    def __str__(self) -> str:  # pragma: no cover - trivial
+        return self.text
+
+
+@dataclass(frozen=True)
+class AnagramGroup:
+    """An aggregate of words that are anagrams of one another."""
+    signature: str
+    words: Tuple[str, ...]
+
+    @property
+    def size(self) -> int:
+        return len(self.words)
+
+    @property
+    def word_length(self) -> int:
+        return len(self.words[0]) if self.words else 0
+
+    def is_anagram_set(self) -> bool:
+        """A real anagram set has at least two members."""
+        return self.size >= 2
+
+    def contains(self, word: str) -> bool:
+        return word.lower() in {w.lower() for w in self.words}
+
+    def __iter__(self):
+        return iter(self.words)
+
+    def __len__(self) -> int:
+        return self.size
+
+
+@dataclass(frozen=True)
+class AnagramStats:
+    """Statistics computed over a collection of anagram groups."""
+    total_words: int
+    total_groups: int
+    anagram_groups: int
+    largest_group_size: int
+    total_signatures_processed: int
+
+    @property
+    def grouped_word_ratio(self) -> float:
+        if self.total_words == 0:
+            return 0.0
+        return self.anagram_groups / self.total_words
+
+
+# =============================================================================
+# Domain Service
+# =============================================================================
+
+class AnagramService:
+    """Domain service: groups words into anagram sets."""
+
+    def __init__(self, strategy: SignatureStrategy = SignatureStrategy.SORTED,
+                 min_length: int = 1, case_sensitive: bool = False):
+        self._strategy = strategy
+        self._min_length = min_length
+        self._case_sensitive = case_sensitive
+
+    @property
+    def strategy(self) -> SignatureStrategy:
+        return self._strategy
+
+    def _key(self, raw: str) -> str:
+        word = raw if self._case_sensitive else raw.lower()
+        if self._strategy is SignatureStrategy.SORTED:
+            return "".join(sorted(word))
+        return Word(word).signature(self._strategy)
+
+    def group(self, words: List[str]) -> List[AnagramGroup]:
+        """Group words into AnagramGroup aggregates.
+
+        Words shorter than ``min_length`` are ignored. Duplicates are kept
+        (they are themselves anagrams of each other).
+        """
+        buckets: Dict[str, List[str]] = {}
+        for raw in words:
+            raw = raw.strip()
+            if len(raw) < self._min_length:
+                continue
+            buckets.setdefault(self._key(raw), []).append(raw)
+        return [
+            AnagramGroup(signature=sig, words=tuple(members))
+            for sig, members in buckets.items()
+        ]
+
+    def group_as_lists(self, words: List[str]) -> List[List[str]]:
+        """Group words, returning plain nested lists."""
+        groups = self.group(words)
+        return [list(g.words) for g in groups]
+
+    def anagram_sets(self, words: List[str]) -> List[AnagramGroup]:
+        """Only groups that actually contain anagrams (size >= 2)."""
+        return [g for g in self.group(words) if g.is_anagram_set()]
+
+    def largest_group(self, words: List[str]) -> Optional[AnagramGroup]:
+        """The anagram group with the most words (ties broken by first seen)."""
+        groups = self.group(words)
+        if not groups:
+            return None
+        return max(groups, key=lambda g: g.size)
+
+    def longest_anagram_group(self, words: List[str]) -> Optional[AnagramGroup]:
+        """Anagram group with the longest words, then the largest."""
+        groups = [g for g in self.group(words) if g.is_anagram_set()]
+        if not groups:
+            return None
+        return max(groups, key=lambda g: (g.word_length, g.size))
+
+    def word_with_most_anagrams(self, words: List[str]) -> Optional[Tuple[str, int]]:
+        """Return (word, count) for the word in the biggest anagram set."""
+        largest = self.largest_group(words)
+        if largest is None or not largest.is_anagram_set():
+            return None
+        return (largest.words[0], largest.size)
+
+    def stats(self, words: List[str]) -> AnagramStats:
+        """Compute summary statistics for a word list."""
+        groups = self.group(words)
+        anagram_groups = [g for g in groups if g.is_anagram_set()]
+        return AnagramStats(
+            total_words=sum(g.size for g in groups),
+            total_groups=len(groups),
+            anagram_groups=len(anagram_groups),
+            largest_group_size=max((g.size for g in groups), default=0),
+            total_signatures_processed=len(groups),
+        )
+
+
+# =============================================================================
+# Repository
+# =============================================================================
+
+class AnagramRepository(Protocol):
+    """Repository interface for anagram groups."""
+
+    def save(self, group: AnagramGroup) -> None: ...
+    def load(self, signature: str) -> Optional[AnagramGroup]: ...
+    def all(self) -> List[AnagramGroup]: ...
+    def clear(self) -> None: ...
+
+
+class InMemoryAnagramRepository:
+    """In-memory repository keyed by signature."""
+
+    def __init__(self):
+        self._groups: Dict[str, AnagramGroup] = {}
+
+    def save(self, group: AnagramGroup) -> None:
+        self._groups[group.signature] = group
+
+    def load(self, signature: str) -> Optional[AnagramGroup]:
+        return self._groups.get(signature)
+
+    def all(self) -> List[AnagramGroup]:
+        return list(self._groups.values())
+
+    def clear(self) -> None:
+        self._groups.clear()
+
+    def __len__(self) -> int:
+        return len(self._groups)
+
+
+# =============================================================================
+# Commands & Queries (CQRS)
+# =============================================================================
+
+@dataclass
+class GroupAnagramsCommand:
+    words: List[str]
+    store: bool = False
+
+
+@dataclass
+class FindAnagramsQuery:
+    word: str
+
+
+@dataclass
+class LargestGroupQuery:
+    words: List[str]
+
+
+@dataclass
+class StatsQuery:
+    words: List[str]
+
+
+class AnagramCommandHandler:
+    """Handles write-side operations."""
+
+    def __init__(self, service: AnagramService, repository: AnagramRepository):
+        self._service = service
+        self._repository = repository
+
+    def handle_group(self, cmd: GroupAnagramsCommand) -> List[AnagramGroup]:
+        groups = self._service.group(cmd.words)
+        if cmd.store:
+            for g in groups:
+                self._repository.save(g)
+        return groups
+
+
+class AnagramQueryHandler:
+    """Handles read-side operations."""
+
+    def __init__(self, service: AnagramService, repository: AnagramRepository):
+        self._service = service
+        self._repository = repository
+
+    def handle_find(self, query: FindAnagramsQuery) -> List[str]:
+        for group in self._repository.all():
+            if group.contains(query.word):
+                return [w for w in group.words if w.lower() != query.word.lower()]
+        return []
+
+    def handle_largest(self, query: LargestGroupQuery) -> Optional[AnagramGroup]:
+        return self._service.largest_group(query.words)
+
+    def handle_stats(self, query: StatsQuery) -> AnagramStats:
+        return self._service.stats(query.words)
+
+
+# =============================================================================
+# Facade
+# =============================================================================
 
 class Anagrams:
-    """Group words into anagram sets"""
-    
-    def __init__(self):
-        raise NotImplementedError("Implement Anagrams")
-    
+    """Main facade for anagram grouping."""
+
+    def __init__(self, strategy: SignatureStrategy = SignatureStrategy.SORTED,
+                 min_length: int = 1, case_sensitive: bool = False):
+        self._service = AnagramService(strategy, min_length, case_sensitive)
+        self._repository = InMemoryAnagramRepository()
+        self._command_handler = AnagramCommandHandler(self._service, self._repository)
+        self._query_handler = AnagramQueryHandler(self._service, self._repository)
+
+    # Commands
+    def group(self, words: List[str], store: bool = False) -> List[AnagramGroup]:
+        return self._command_handler.handle_group(
+            GroupAnagramsCommand(words=words, store=store)
+        )
+
     def group_anagrams(self, words: List[str]) -> List[List[str]]:
-        """Group words into anagram sets"""
-        raise NotImplementedError("Implement group_anagrams")
+        """Group words into plain nested lists (kata's primary API)."""
+        return self._service.group_as_lists(words)
+
+    # Queries
+    def find_anagrams(self, word: str) -> List[str]:
+        if not self._repository.all():
+            return []
+        return self._query_handler.handle_find(FindAnagramsQuery(word=word))
+
+    def largest_group(self, words: List[str]) -> Optional[AnagramGroup]:
+        return self._query_handler.handle_largest(LargestGroupQuery(words=words))
+
+    def longest_anagram_group(self, words: List[str]) -> Optional[AnagramGroup]:
+        return self._service.longest_anagram_group(words)
+
+    def word_with_most_anagrams(self, words: List[str]) -> Optional[Tuple[str, int]]:
+        return self._service.word_with_most_anagrams(words)
+
+    def stats(self, words: List[str]) -> AnagramStats:
+        return self._query_handler.handle_stats(StatsQuery(words=words))
 
 
-# Functional alternative (for simpler katas)
+# =============================================================================
+# Functional interface
+# =============================================================================
+
 def group_anagrams(words: List[str]) -> List[List[str]]:
-    """Group words into anagram sets"""
-    raise NotImplementedError("Implement group_anagrams")
+    """Group words into anagram sets, returning plain nested lists."""
+    return AnagramService().group_as_lists(words)
+
+
+def find_anagram_sets(words: List[str]) -> List[List[str]]:
+    """Only the groups that contain real anagrams (size >= 2)."""
+    return [list(g.words) for g in AnagramService().anagram_sets(words)]
+
+
+def largest_anagram_group(words: List[str]) -> List[str]:
+    """The largest anagram set (empty list if none has anagrams)."""
+    group = AnagramService().largest_group(words)
+    if group is None or not group.is_anagram_set():
+        return []
+    return list(group.words)
+
+
+def count_anagram_groups(words: List[str]) -> int:
+    """Number of groups that contain real anagrams."""
+    return len(AnagramService().anagram_sets(words))
+
+
+def timed_group(words: List[str],
+                strategy: SignatureStrategy = SignatureStrategy.SORTED
+                ) -> Tuple[List[AnagramGroup], float]:
+    """Group words and return (groups, elapsed_seconds)."""
+    start = time.perf_counter()
+    groups = AnagramService(strategy).group(words)
+    return groups, time.perf_counter() - start
+
+
+# =============================================================================
+# Example Usage & Demo
+# =============================================================================
+
+if __name__ == "__main__":
+    print("=== Kata06: Anagrams - Demo ===\n")
+
+    sample = [
+        "listen", "silent", "enlist", "hello", "world", "dlrow",
+        "cat", "act", "tac", "dog", "god", "odg", "zebra",
+    ]
+
+    engine = Anagrams()
+    print("Groups:")
+    for group in engine.group(sample):
+        marker = "*" if group.is_anagram_set() else " "
+        print(f"  {marker} {list(group.words)}")
+
+    print(f"\nGroups with real anagrams: {count_anagram_groups(sample)}")
+    largest = engine.largest_group(sample)
+    print(f"Largest group: {list(largest.words) if largest else []}")
+    print(f"Longest anagram group: {engine.longest_anagram_group(sample)}")
+    print(f"Stats: {engine.stats(sample)}")
+
+    print("\nStrategy comparison (should group identically):")
+    for strategy in SignatureStrategy:
+        groups = AnagramService(strategy).group_as_lists(sample)
+        print(f"  {strategy.value:8} -> {sorted(map(sorted, groups))}")

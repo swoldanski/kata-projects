@@ -36,10 +36,10 @@ binding rules.
 - **Kata03: How Big? How Fast?** — Estimation calculator for bits, storage, time with 32 tests passing
 - **Kata04: Data Munging** — Weather/soccer data parsing with DRY fusion, 32 tests passing
 - **Kata05: Bloom Filters** — Probabilistic set membership with MD5/SHA256/FNV/double hashing, 43 tests passing
+- **Kata06: Anagrams** — Anagram grouping with four signature strategies (sorted/prime/count/counter), 20 tests passing
 
 ## Backlog
 
-- Kata06: Anagrams - Python implementation
 - Kata07: How'd I Do? - Python implementation
 - Kata08: Conflicting Objectives - Python implementation
 - Kata09: Back to the Checkout - Python implementation

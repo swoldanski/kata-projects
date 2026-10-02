@@ -1,5 +1,16 @@
 ## [Unreleased]
 
+## [0.3.6] - 2026-10-02
+
+### Added
+- **Kata06: Anagrams** — Group words into anagram sets:
+  - Four interchangeable signature strategies: sorted letters, prime factorization, 26-slot letter counts, frozen Counter
+  - `AnagramGroup` aggregate with size, word length, membership and anagram-set checks
+  - Find anagrams of a word, largest group, longest group, and dictionary statistics
+  - Full DDD/CQRS/Repository architecture with `InMemoryAnagramRepository`
+  - Functional interface (`group_anagrams`, `find_anagram_sets`, `largest_anagram_group`, `timed_group`)
+  - 20 tests covering grouping, strategies, aggregates, filtering, statistics and scale
+
 ## [0.3.5] - 2026-10-02
 
 ### Added
