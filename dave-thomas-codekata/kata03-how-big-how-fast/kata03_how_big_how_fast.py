@@ -15,7 +15,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from math import ceil, log2
-from typing import Protocol
+from typing import Any, Protocol
 
 # =============================================================================
 # Value Objects
@@ -334,7 +334,7 @@ class EstimationCommandHandler:
         self._repository.save(EstimationCategory.BITS, str(cmd.value), result)
         return result
 
-    def handle_estimate_storage(self, cmd: EstimateStorageCommand):
+    def handle_estimate_storage(self, cmd: EstimateStorageCommand) -> StorageEstimate:
         if cmd.category == "town_records":
             result = self._storage_service.estimate_town_records(
                 cmd.num_items,
@@ -349,7 +349,7 @@ class EstimationCommandHandler:
         self._repository.save(EstimationCategory.STORAGE, str(cmd.num_items), result)
         return result
 
-    def handle_estimate_time(self, cmd: EstimateTimeCommand):
+    def handle_estimate_time(self, cmd: EstimateTimeCommand) -> TimeEstimate:
         if cmd.category == "modem":
             result = self._time_service.estimate_modem_transfer(cmd.pages, cmd.baud)
         elif cmd.category == "binary_search":
@@ -391,6 +391,10 @@ class EstimationQueryHandler:
 
 class HowBigHowFast:
     """Main facade for How Big? How Fast? estimation calculator."""
+
+    _repository: EstimationRepository
+    _command_handler: EstimationCommandHandler
+    _query_handler: EstimationQueryHandler
 
     def __init__(self):
         self._repository = InMemoryEstimationRepository()
@@ -525,7 +529,7 @@ def estimate_password_cracking_time(
     max_length: int, charset_size: int, hash_time_ms: float
 ) -> float:
     total = sum(charset_size ** i for i in range(1, max_length + 1))
-    return total * hash_time_ms
+    return float(total) * hash_time_ms
 
 
 # =============================================================================
@@ -536,7 +540,7 @@ def get_kata_answers() -> dict:
     """Return the answers to all kata questions."""
     calculator = HowBigHowFast()
 
-    answers = {}
+    answers: dict[str, Any] = {}
 
     # How Big? - Bits
     answers["bits"] = {}

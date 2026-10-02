@@ -34,7 +34,7 @@ class Money:
             raise ValueError("Cannot add different currencies")
         return Money(self.amount + other.amount, self.currency)
 
-    def __mul__(self, quantity: int) -> Money:
+    def __mul__(self, quantity: int | Decimal) -> Money:
         return Money(self.amount * quantity, self.currency)
 
     def __str__(self) -> str:
@@ -130,8 +130,10 @@ class Product:
 
     def _rule_applies(self, rule: PricingRule, quantity: Quantity) -> bool:
         if rule.pricing_type == PricingType.VOLUME:
+            assert rule.volume_quantity is not None
             return quantity.amount >= rule.volume_quantity
         if rule.pricing_type == PricingType.BUY_N_GET_M:
+            assert rule.buy_quantity is not None
             return quantity.amount >= rule.buy_quantity
         return True
 
@@ -190,10 +192,13 @@ class PricingService:
 
     def _apply_rule(self, rule: PricingRule, quantity: Quantity) -> Money:
         if rule.pricing_type == PricingType.SIMPLE:
+            assert rule.price_per_unit is not None
             return rule.price_per_unit * int(quantity.amount)
 
         elif rule.pricing_type == PricingType.VOLUME:
             # Volume discount: N for $X
+            assert rule.volume_quantity is not None
+            assert rule.volume_price is not None
             full_sets = int(quantity.amount) // rule.volume_quantity
             remainder = int(quantity.amount) % rule.volume_quantity
             total = rule.volume_price * full_sets
@@ -203,10 +208,14 @@ class PricingService:
 
         elif rule.pricing_type == PricingType.WEIGHT:
             # Weight-based: $X per unit weight
+            assert rule.price_per_unit is not None
             return rule.price_per_unit * Decimal(str(quantity.amount))
 
         elif rule.pricing_type == PricingType.BUY_N_GET_M:
             # Buy N get M free
+            assert rule.buy_quantity is not None
+            assert rule.get_quantity is not None
+            assert rule.price_per_unit is not None
             paid_items = int(quantity.amount)
             deal_size = rule.buy_quantity + rule.get_quantity
             full_deals = paid_items // deal_size
@@ -326,6 +335,11 @@ class ProductQueryHandler:
 
 class PricingEngine:
     """Main facade for the pricing system."""
+
+    _repository: InMemoryProductRepository
+    _pricing_service: PricingService
+    _command_handler: ProductCommandHandler
+    _query_handler: ProductQueryHandler
 
     def __init__(self):
         self._repository = InMemoryProductRepository()

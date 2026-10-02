@@ -11,10 +11,10 @@ Source: http://codekata.com/kata/kata04-data-munging/
 from __future__ import annotations
 
 import re
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Protocol
+from typing import Any, Protocol
 
 # =============================================================================
 # Value Objects
@@ -199,15 +199,15 @@ class DataMungingService:
         return list(self._soccer_parser.parse(lines))
 
     # Part Three: DRY Fusion - Shared functionality
-    def find_min_spread_generic(self, file_path: Path,
-                                 parser,
-                                 key_func) -> object | None:
+    def find_min_spread_generic(
+        self, file_path: Path, parser: ColumnParser, key_func: Callable[[Any], Any]
+    ) -> object | None:
         """Generic min-finding function (DRY principle)."""
         lines = self._repository.read_lines(file_path)
-        records = list(parser.parse(lines))
+        records: list[Any] = list(parser.parse_lines(lines))
         if not records:
             return None
-        return min(records, key=key_func)
+        return min(records, key=key_func)  # type: ignore[no-any-return]
 
 
 # =============================================================================

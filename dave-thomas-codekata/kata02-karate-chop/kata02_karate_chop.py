@@ -16,6 +16,7 @@ The kata requires 5 totally unique implementations:
 from __future__ import annotations
 
 from bisect import bisect_left
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 from typing import Protocol
@@ -52,10 +53,10 @@ class SearchHistoryRepository(Protocol):
 
     def get_history(self, algorithm: SearchAlgorithm | None = None) -> list[SearchResult]: ...
 
-    def get_stats(self, algorithm: SearchAlgorithm | None = None) -> dict: ...
+    def get_stats(self, algorithm: SearchAlgorithm | None = None) -> dict[str, float]: ...
 
 
-class InMemorySearchHistoryRepository:
+class InMemorySearchHistoryRepository(SearchHistoryRepository):
     """In-memory implementation of search history repository."""
 
     def __init__(self):
@@ -69,7 +70,7 @@ class InMemorySearchHistoryRepository:
             return [r for r in self._history if r.algorithm == algorithm]
         return list(self._history)
 
-    def get_stats(self, algorithm: SearchAlgorithm | None = None) -> dict:
+    def get_stats(self, algorithm: SearchAlgorithm | None = None) -> dict[str, float]:
         history = self.get_history(algorithm)
         if not history:
             return {"count": 0, "avg_iterations": 0, "avg_comparisons": 0}
@@ -85,6 +86,8 @@ class InMemorySearchHistoryRepository:
 # =============================================================================
 
 class BinarySearchService:
+    _history_repo: SearchHistoryRepository
+
     """Domain service containing all 5 binary search implementations."""
 
     def __init__(self, history_repo: SearchHistoryRepository | None = None):
@@ -239,7 +242,7 @@ class BinarySearchService:
     # -------------------------------------------------------------------------
     def search(self, target: int, arr: list[int], algorithm: SearchAlgorithm) -> SearchResult:
         """Dispatch to the selected algorithm."""
-        dispatch = {
+        dispatch: dict[SearchAlgorithm, Callable[[int, list[int]], SearchResult]] = {
             SearchAlgorithm.ITERATIVE: self.search_iterative,
             SearchAlgorithm.RECURSIVE: self.search_recursive,
             SearchAlgorithm.FUNCTIONAL: self.search_functional,
@@ -289,7 +292,7 @@ class SearchQuery:
 class SearchQueryResult:
     results: list[SearchResult]
     history: list[SearchResult]
-    stats: dict
+    stats: dict[str, float]
 
 
 class SearchQueryHandler:
@@ -322,6 +325,11 @@ class SearchQueryHandler:
 class KarateChop:
     """Main facade for the karate chop (binary search) system."""
 
+    _history_repo: InMemorySearchHistoryRepository
+    _service: BinarySearchService
+    _command_handler: SearchCommandHandler
+    _query_handler: SearchQueryHandler
+
     def __init__(self):
         self._history_repo = InMemorySearchHistoryRepository()
         self._service = BinarySearchService(self._history_repo)
@@ -351,7 +359,7 @@ class KarateChop:
     def get_history(self, algorithm: SearchAlgorithm | None = None) -> list[SearchResult]:
         return self._history_repo.get_history(algorithm)
 
-    def get_stats(self, algorithm: SearchAlgorithm | None = None) -> dict:
+    def get_stats(self, algorithm: SearchAlgorithm | None = None) -> dict[str, float]:
         return self._history_repo.get_stats(algorithm)
 
 
@@ -478,8 +486,8 @@ if __name__ == "__main__":
     # Using the full facade
     print("=== Using KarateChop Facade ===")
     kc = KarateChop()
-    result = kc.search_all(3, [1, 3, 5])
-    for r in result:
+    results = kc.search_all(3, [1, 3, 5])
+    for r in results:
         print(
             f"  {r.algorithm.value:15s}: index={r.index:2d}, "
             f"iterations={r.iterations}, comparisons={r.comparisons}"

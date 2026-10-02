@@ -117,7 +117,11 @@ class DoubleHashFunction(HashFunction):
     This is more efficient than computing k independent hashes.
     """
 
-    def __init__(self, hash1: HashFunction = None, hash2: HashFunction = None):
+    def __init__(
+        self,
+        hash1: HashFunction | None = None,
+        hash2: HashFunction | None = None,
+    ):
         self.hash1 = hash1 or MD5HashFunction()
         self.hash2 = hash2 or SHA256HashFunction()
 
@@ -184,7 +188,7 @@ class BloomFilter:
 
     @classmethod
     def create(cls, filter_id: str, config: BloomFilterConfig,
-               hash_function: HashFunction = None) -> BloomFilter:
+               hash_function: HashFunction | None = None) -> BloomFilter:
         """Factory method to create a new Bloom filter."""
         m = config.optimal_bit_array_size
         bit_array = bytearray(m)
@@ -264,7 +268,7 @@ class BloomFilterService:
 
     def create_filter(self, filter_id: str, expected_elements: int,
                       false_positive_rate: float,
-                      hash_function: HashFunction = None) -> BloomFilter:
+                      hash_function: HashFunction | None = None) -> BloomFilter:
         """Create and save a new Bloom filter with optimal parameters."""
         config = BloomFilterConfig(expected_elements, false_positive_rate)
         bf = BloomFilter.create(filter_id, config, hash_function)
@@ -374,6 +378,11 @@ class BloomFilterQueryHandler:
 class BloomFilters:
     """Main facade for Bloom filter operations."""
 
+    _repository: InMemoryBloomFilterRepository
+    _service: BloomFilterService
+    _command_handler: BloomFilterCommandHandler
+    _query_handler: BloomFilterQueryHandler
+
     def __init__(self):
         self._repository = InMemoryBloomFilterRepository()
         self._service = BloomFilterService(self._repository)
@@ -418,7 +427,7 @@ class BloomFilters:
 class BloomFilterFunctional:
     """Functional-style Bloom filter implementation."""
 
-    def __init__(self, m: int, k: int, hash_func: Callable = None):
+    def __init__(self, m: int, k: int, hash_func: Callable | None = None):
         self.m = m
         self.k = k
         self.bit_array = bytearray(m)
@@ -480,14 +489,15 @@ if __name__ == "__main__":
 
     # Stats
     stats = bf.get_stats("spell_checker")
-    print(f"\nStats: {stats.elements_added} added, {stats.queries_made} queries")
+    if stats is not None:
+        print(f"\nStats: {stats.elements_added} added, {stats.queries_made} queries")
     print(f"Estimated FPR: {bf.get_estimated_fpr('spell_checker'):.4f}")
     print(f"Fill ratio: {bf.get_fill_ratio('spell_checker'):.4f}")
 
     # Functional usage
     print("\nFunctional usage:")
     bf_func = create_bloom_filter(1000, 0.01)
-    bf_func.add_multiple(["apple", "banana", "cherry"])
+    bf_func.add_multiple(iter(["apple", "banana", "cherry"]))
     print(f"'apple' in filter: {'apple' in bf_func}")
     print(f"'orange' in filter: {'orange' in bf_func}")
 
