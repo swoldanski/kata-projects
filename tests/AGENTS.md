@@ -30,6 +30,10 @@
 
 ## Verification
 
+- Run catalog tests: `uv run pytest tests/ -v`
+- Run all kata tests: `uv run pytest dave-thomas-codekata/ gaurav-arora-tdd-katas/ wonderland-clojure-katas/ sensiolabs-poledev-katas/ -v`
+- Lint test files: `uv run ruff tests/`
+
 ## Child aSDLC Index
 
 - No further child AGENTS.md files in `/tests/`. The verification status of this directory is reported on every aSDLC closeout pass by the owning doc (this file).

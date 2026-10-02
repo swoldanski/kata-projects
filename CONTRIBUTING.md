@@ -90,7 +90,22 @@ Be respectful and constructive in all interactions. Follow the project's aSDLC p
 
 ## Verification Mechanisms
 
-This template currently has no verification framework. The root `AGENTS.md` rule states: "Verification must reflect an existing check; if no verification framework exists yet, leave it empty and update it when one exists." Contributors should follow the closeout procedure in the root `AGENTS.md` and the guidance in `tests/AGENTS.md` for behavioral testing philosophy.
+This project uses the following verification checks (defined in `tests/AGENTS.md`):
+
+- **Catalog tests**: `uv run pytest tests/ -v`
+  - Validates kata structure, README format, template files, no duplicates
+- **Kata tests**: `uv run pytest <collection>/<kata>/ -v`
+  - Behavioral tests for each implemented kata
+- **Lint**: `uv run ruff .`
+- **Type check**: `uv run mypy .`
+
+Before committing, run all verification:
+```bash
+uv run pytest tests/ -v
+uv run pytest dave-thomas-codekata/ gaurav-arora-tdd-katas/ wonderland-clojure-katas/ sensiolabs-poledev-katas/ -v
+uv run ruff .
+uv run mypy .
+```
 
 ---
  

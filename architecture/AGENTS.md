@@ -24,8 +24,17 @@ Editing → edit → Update After Editing → Closeout).
 
 - Place contributor-facing or implementation-detail docs here as part of the
   aSDLC closeout pass whenever such documentation is added or changed.
+- Document internal design decisions, architectural patterns (DDD, CQRS, Repository),
+  and contributor workflows.
+- Maintain `/architecture/README.md` as the DevSecOps manual index.
+- Cross-reference `/docs/README.md` for user-facing documentation.
 
 ## Verification
+
+- Run catalog tests: `uv run pytest tests/ -v`
+- Run kata tests: `uv run pytest <collection>/<kata>/ -v`
+- Lint: `uv run ruff .`
+- Type check: `uv run mypy .`
 
 ## Child aSDLC Index
 

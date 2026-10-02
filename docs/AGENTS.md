@@ -33,8 +33,17 @@ pass (Read Before Editing → edit → Update After Editing → Closeout).
   describes contributor workflow or implementation internals, place it in
   `/architecture` instead.
 - Keep each doc task-oriented, concise, and operational.
+- **Kata documentation**: Each kata in collections must have a `README.md` with
+  problem statement, requirements, examples, TDD steps, and extensions.
+- **Cross-reference**: Link to `/architecture/README.md` for implementation patterns
+  (DDD, CQRS, Repository, in-memory state).
 
 ## Verification
+
+- Run catalog tests: `uv run pytest tests/ -v`
+- Verify each kata has `README.md` with required sections
+- Verify no duplicate kata names across collections
+- Verify kata counts match expected per collection
 
 ## Child aSDLC Index
 
