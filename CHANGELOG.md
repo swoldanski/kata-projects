@@ -1,5 +1,16 @@
 ## [Unreleased]
 
+## [0.3.3] - 2026-10-02
+
+### Added
+- **Kata03: How Big? How Fast?** — Estimation calculator for bits, storage, time:
+  - Bits estimation for unsigned integers (log2 ceiling)
+  - Storage: town records (chars per record), binary tree (32/64-bit with pointer overhead)
+  - Time: modem transfer (baud rate), binary search scaling (logarithmic), password cracking (combinatorial)
+  - Full DDD/CQRS/Repository architecture with estimation history tracking
+  - 32 comprehensive tests covering all estimation categories and architecture patterns
+  - Functional and class-based interfaces
+
 ## [0.3.2] - 2026-10-02
 
 ### Added

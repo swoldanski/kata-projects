@@ -33,10 +33,10 @@ binding rules.
 - **Enhanced verification** (`tests/test_catalog.py` — 8 tests: structure, templates, README format, duplicates)
 - **Kata01: Supermarket Pricing** — Python implementation with DDD/CQRS/Repository patterns, 36 tests passing
 - **Kata02: Karate Chop** — 5 unique binary search implementations (iterative, recursive, functional, built-in, tail-recursive), 47 tests passing
+- **Kata03: How Big? How Fast?** — Estimation calculator for bits, storage, time with 32 tests passing
 
 ## Backlog
 
-- Kata03: How Big? How Fast? - Python implementation
 - Kata04: Data Munging - Python implementation
 - Kata05: Bloom Filters - Python implementation
 - Kata06: Anagrams - Python implementation
