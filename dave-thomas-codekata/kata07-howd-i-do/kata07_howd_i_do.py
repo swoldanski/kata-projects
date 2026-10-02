@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,16 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class HowdIDo:
     """Calculate quiz score"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement HowdIDo")
-    
-    def score_quiz(self, answers: List[str], key: List[str]) -> int:
+
+    def score_quiz(self, answers: list[str], key: list[str]) -> int:
         """Calculate quiz score"""
         raise NotImplementedError("Implement score_quiz")
 
 
 # Functional alternative (for simpler katas)
-def score_quiz(answers: List[str], key: List[str]) -> int:
+def score_quiz(answers: list[str], key: list[str]) -> int:
     """Calculate quiz score"""
     raise NotImplementedError("Implement score_quiz")

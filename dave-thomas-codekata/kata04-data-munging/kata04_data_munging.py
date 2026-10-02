@@ -8,12 +8,13 @@ This module implements the Data Munging kata in three parts:
 Source: http://codekata.com/kata/kata04-data-munging/
 """
 
+from __future__ import annotations
+
+import re
+from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional, Protocol, Iterator
-from abc import ABC, abstractmethod
-import re
-
+from typing import Protocol
 
 # =============================================================================
 # Value Objects
@@ -26,7 +27,7 @@ class WeatherRecord:
     max_temp: int
     min_temp: int
     spread: int
-    
+
     def __str__(self) -> str:
         return f"Day {self.day}: max={self.max_temp}, min={self.min_temp}, spread={self.spread}"
 
@@ -43,7 +44,7 @@ class SoccerRecord:
     goals_against: int
     goal_diff: int
     points: int
-    
+
     def __str__(self) -> str:
         return f"{self.team}: GF={self.goals_for}, GA={self.goals_against}, diff={self.goal_diff}"
 
@@ -54,22 +55,22 @@ class SoccerRecord:
 
 class DataFileRepository(Protocol):
     """Repository for reading data files."""
-    
+
     def read_lines(self, file_path: Path) -> Iterator[str]: ...
-    
+
     def exists(self, file_path: Path) -> bool: ...
 
 
 class LocalFileRepository:
     """Local filesystem implementation."""
-    
+
     def read_lines(self, file_path: Path) -> Iterator[str]:
         if not file_path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
         with file_path.open('r') as f:
             for line in f:
                 yield line.rstrip('\n\r')
-    
+
     def exists(self, file_path: Path) -> bool:
         return file_path.exists()
 
@@ -80,12 +81,12 @@ class LocalFileRepository:
 
 class ColumnParser:
     """Generic column-based parser for fixed-width or whitespace-delimited files."""
-    
-    def __init__(self, skip_lines: int = 0, header_pattern: Optional[str] = None):
+
+    def __init__(self, skip_lines: int = 0, header_pattern: str | None = None):
         self.skip_lines = skip_lines
         self.header_pattern = header_pattern
-    
-    def parse_lines(self, lines: Iterator[str]) -> Iterator[List[str]]:
+
+    def parse_lines(self, lines: Iterator[str]) -> Iterator[list[str]]:
         """Parse lines into columns, skipping header/blank lines."""
         line_num = 0
         for line in lines:
@@ -104,10 +105,10 @@ class ColumnParser:
 
 class WeatherParser:
     """Parser for weather.dat format."""
-    
-    def __init__(self, parser: Optional[ColumnParser] = None):
+
+    def __init__(self, parser: ColumnParser | None = None):
         self.parser = parser or ColumnParser(skip_lines=0)
-    
+
     def parse(self, lines: Iterator[str]) -> Iterator[WeatherRecord]:
         for cols in self.parser.parse_lines(lines):
             if len(cols) < 3:
@@ -126,10 +127,10 @@ class WeatherParser:
 
 class SoccerParser:
     """Parser for football.dat format."""
-    
-    def __init__(self, parser: Optional[ColumnParser] = None):
+
+    def __init__(self, parser: ColumnParser | None = None):
         self.parser = parser or ColumnParser(skip_lines=1, header_pattern=r'^\s*Team')
-    
+
     def parse(self, lines: Iterator[str]) -> Iterator[SoccerRecord]:
         for cols in self.parser.parse_lines(lines):
             if len(cols) < 9:  # Need at least Team, P, W, L, D, GF, GA, GD, Pts
@@ -147,7 +148,7 @@ class SoccerParser:
                 goals_against = int(cols[6])
                 goal_diff = goals_for - goals_against
                 points = int(cols[8]) if len(cols) > 8 else won * 3 + drawn
-                
+
                 yield SoccerRecord(
                     team=team,
                     played=played,
@@ -165,42 +166,42 @@ class SoccerParser:
 
 class DataMungingService:
     """Domain service for data munging operations (DRY Fusion)."""
-    
+
     def __init__(self, repository: DataFileRepository):
         self._repository = repository
         self._weather_parser = WeatherParser()
         self._soccer_parser = SoccerParser()
-    
+
     # Part One: Weather
-    def find_min_spread_day(self, file_path: Path) -> Optional[WeatherRecord]:
+    def find_min_spread_day(self, file_path: Path) -> WeatherRecord | None:
         """Find day with smallest temperature spread."""
         lines = self._repository.read_lines(file_path)
         records = list(self._weather_parser.parse(lines))
         if not records:
             return None
         return min(records, key=lambda r: r.spread)
-    
-    def get_all_weather(self, file_path: Path) -> List[WeatherRecord]:
+
+    def get_all_weather(self, file_path: Path) -> list[WeatherRecord]:
         lines = self._repository.read_lines(file_path)
         return list(self._weather_parser.parse(lines))
-    
+
     # Part Two: Soccer
-    def find_min_goal_diff_team(self, file_path: Path) -> Optional[SoccerRecord]:
+    def find_min_goal_diff_team(self, file_path: Path) -> SoccerRecord | None:
         """Find team with smallest goal difference."""
         lines = self._repository.read_lines(file_path)
         records = list(self._soccer_parser.parse(lines))
         if not records:
             return None
         return min(records, key=lambda r: abs(r.goal_diff))
-    
-    def get_all_soccer(self, file_path: Path) -> List[SoccerRecord]:
+
+    def get_all_soccer(self, file_path: Path) -> list[SoccerRecord]:
         lines = self._repository.read_lines(file_path)
         return list(self._soccer_parser.parse(lines))
-    
+
     # Part Three: DRY Fusion - Shared functionality
-    def find_min_spread_generic(self, file_path: Path, 
+    def find_min_spread_generic(self, file_path: Path,
                                  parser,
-                                 key_func) -> Optional[object]:
+                                 key_func) -> object | None:
         """Generic min-finding function (DRY principle)."""
         lines = self._repository.read_lines(file_path)
         records = list(parser.parse(lines))
@@ -225,14 +226,14 @@ class ParseSoccerCommand:
 
 class DataMungingCommandHandler:
     """Command handler for data munging operations."""
-    
+
     def __init__(self, service: DataMungingService):
         self._service = service
-    
-    def handle_weather(self, cmd: ParseWeatherCommand) -> Optional[WeatherRecord]:
+
+    def handle_weather(self, cmd: ParseWeatherCommand) -> WeatherRecord | None:
         return self._service.find_min_spread_day(cmd.file_path)
-    
-    def handle_soccer(self, cmd: ParseSoccerCommand) -> Optional[SoccerRecord]:
+
+    def handle_soccer(self, cmd: ParseSoccerCommand) -> SoccerRecord | None:
         return self._service.find_min_goal_diff_team(cmd.file_path)
 
 
@@ -252,22 +253,22 @@ class SoccerQuery:
 
 @dataclass
 class DataMungingResult:
-    weather: Optional[WeatherRecord] = None
-    soccer: Optional[SoccerRecord] = None
+    weather: WeatherRecord | None = None
+    soccer: SoccerRecord | None = None
 
 
 class DataMungingQueryHandler:
     """Query handler for data munging."""
-    
+
     def __init__(self, service: DataMungingService):
         self._service = service
-    
-    def handle_weather(self, query: WeatherQuery) -> Optional[WeatherRecord]:
+
+    def handle_weather(self, query: WeatherQuery) -> WeatherRecord | None:
         return self._service.find_min_spread_day(query.file_path)
-    
-    def handle_soccer(self, query: SoccerQuery) -> Optional[SoccerRecord]:
+
+    def handle_soccer(self, query: SoccerQuery) -> SoccerRecord | None:
         return self._service.find_min_goal_diff_team(query.file_path)
-    
+
     def handle_all(self, weather_path: Path, soccer_path: Path) -> DataMungingResult:
         return DataMungingResult(
             weather=self._service.find_min_spread_day(weather_path),
@@ -281,36 +282,36 @@ class DataMungingQueryHandler:
 
 class DataMunging:
     """Main facade for data munging operations."""
-    
-    def __init__(self, repository: Optional[DataFileRepository] = None):
+
+    def __init__(self, repository: DataFileRepository | None = None):
         self._repository = repository or LocalFileRepository()
         self._service = DataMungingService(self._repository)
         self._command_handler = DataMungingCommandHandler(self._service)
         self._query_handler = DataMungingQueryHandler(self._service)
-    
+
     # Part One
-    def find_min_spread_day(self, file_path: Path) -> Optional[int]:
+    def find_min_spread_day(self, file_path: Path) -> int | None:
         """Find day with smallest temperature spread. Returns day number."""
         record = self._service.find_min_spread_day(file_path)
         return record.day if record else None
-    
-    def get_weather_record(self, file_path: Path) -> Optional[WeatherRecord]:
+
+    def get_weather_record(self, file_path: Path) -> WeatherRecord | None:
         return self._service.find_min_spread_day(file_path)
-    
+
     # Part Two
-    def find_min_goal_diff_team(self, file_path: Path) -> Optional[str]:
+    def find_min_goal_diff_team(self, file_path: Path) -> str | None:
         """Find team with smallest goal difference. Returns team name."""
         record = self._service.find_min_goal_diff_team(file_path)
         return record.team if record else None
-    
-    def get_soccer_record(self, file_path: Path) -> Optional[SoccerRecord]:
+
+    def get_soccer_record(self, file_path: Path) -> SoccerRecord | None:
         return self._service.find_min_goal_diff_team(file_path)
-    
+
     # Part Three - DRY Fusion
-    def find_min_generic(self, file_path: Path, parser, key_func) -> Optional[object]:
+    def find_min_generic(self, file_path: Path, parser, key_func) -> object | None:
         """Generic min-finding (DRY Fusion)."""
         return self._service.find_min_spread_generic(file_path, parser, key_func)
-    
+
     # Full analysis
     def analyze(self, weather_path: Path, soccer_path: Path) -> DataMungingResult:
         return self._query_handler.handle_all(weather_path, soccer_path)
@@ -340,13 +341,13 @@ def find_min_goal_diff_team(soccer_data: str) -> str:
     return min(records, key=lambda r: abs(r.goal_diff)).team
 
 
-def parse_weather_data(data: str) -> List[WeatherRecord]:
+def parse_weather_data(data: str) -> list[WeatherRecord]:
     """Parse weather data string into records."""
     parser = WeatherParser()
     return list(parser.parse(iter(data.strip().split('\n'))))
 
 
-def parse_soccer_data(data: str) -> List[SoccerRecord]:
+def parse_soccer_data(data: str) -> list[SoccerRecord]:
     """Parse soccer data string into records."""
     parser = SoccerParser()
     return list(parser.parse(iter(data.strip().split('\n'))))
@@ -412,30 +413,34 @@ Derby          38   1  20  17  18  71  -53  10"""
 
 if __name__ == "__main__":
     print("=== Kata04: Data Munging - Demo ===\n")
-    
+
     # Parse sample data
     weather_records = parse_weather_data(SAMPLE_WEATHER)
     soccer_records = parse_soccer_data(SAMPLE_SOCCER)
-    
+
     # Part One: Min spread day
     min_spread = min(weather_records, key=lambda r: r.spread)
     print(f"Part One - Min Spread Day: {min_spread.day} (spread: {min_spread.spread})")
-    
+
     # Part Two: Min goal diff team
     min_goal_diff = min(soccer_records, key=lambda r: abs(r.goal_diff))
     print(f"Part Two - Min Goal Diff Team: {min_goal_diff.team} (diff: {min_goal_diff.goal_diff})")
-    
+
     # Part Three: DRY Fusion - generic finder
-    from kata04_data_munging import DataMunging, LocalFileRepository
     from pathlib import Path
-    
+
+    from kata04_data_munging import DataMunging, LocalFileRepository
+
     # Using generic finder (DRY Fusion)
     dm = DataMunging()
     # We can't run file-based without actual files, but the DRY function works:
     # min_spread_generic = dm.find_min_generic(weather_path, weather_parser, lambda r: r.spread)
     # min_goal_generic = dm.find_min_generic(soccer_path, soccer_parser, lambda r: abs(r.goal_diff))
-    
+
     print("\n=== Kata Questions ===")
     print("1. Design decisions impact DRY: Using shared ColumnParser made fusion easy")
     print("2. Second program influenced by first: Yes, recognized common parsing pattern")
-    print("3. DRY not always good: Over-abstraction can hurt readability if domains differ significantly")
+    print(
+        "3. DRY not always good: Over-abstraction can hurt readability "
+        "if domains differ significantly"
+    )

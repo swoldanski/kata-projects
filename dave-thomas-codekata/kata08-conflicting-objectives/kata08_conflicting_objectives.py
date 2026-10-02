@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,16 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class ConflictingObjectives:
     """Analyze conflicting objectives"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement ConflictingObjectives")
-    
-    def analyze_tradeoffs(self, options: List[dict]) -> dict:
+
+    def analyze_tradeoffs(self, options: list[dict]) -> dict:
         """Analyze conflicting objectives"""
         raise NotImplementedError("Implement analyze_tradeoffs")
 
 
 # Functional alternative (for simpler katas)
-def analyze_tradeoffs(options: List[dict]) -> dict:
+def analyze_tradeoffs(options: list[dict]) -> dict:
     """Analyze conflicting objectives"""
     raise NotImplementedError("Implement analyze_tradeoffs")

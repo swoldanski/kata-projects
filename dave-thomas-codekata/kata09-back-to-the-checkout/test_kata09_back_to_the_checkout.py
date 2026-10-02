@@ -1,7 +1,5 @@
 """Tests for kata09-back-to-the-checkout."""
 
-import pytest
-from kata09_back_to_the_checkout import BackToCheckout, Checkout
 
 
 class TestBackToCheckout:

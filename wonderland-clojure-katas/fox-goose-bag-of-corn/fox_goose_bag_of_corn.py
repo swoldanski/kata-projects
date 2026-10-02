@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,16 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class FoxGooseBagOfCorn:
     """Solve river crossing puzzle"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement FoxGooseBagOfCorn")
-    
-    def solve_river_crossing(self, ) -> List[str]:
+
+    def solve_river_crossing(self, ) -> list[str]:
         """Solve river crossing puzzle"""
         raise NotImplementedError("Implement solve_river_crossing")
 
 
 # Functional alternative (for simpler katas)
-def solve_river_crossing() -> List[str]:
+def solve_river_crossing() -> list[str]:
     """Solve river crossing puzzle"""
     raise NotImplementedError("Implement solve_river_crossing")

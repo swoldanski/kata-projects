@@ -1,7 +1,5 @@
 """Tests for leap-year."""
 
-import pytest
-from leap_year import LeapYear, is_leap_year
 
 
 class TestLeapYear:

@@ -1,7 +1,5 @@
 """Tests for word-wrap-kata."""
 
-import pytest
-from word_wrap_kata import WordWrap, wrap
 
 
 class TestWordWrap:

@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,10 +18,10 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class WordWrap:
     """Wrap text to width"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement WordWrap")
-    
+
     def wrap(self, text: str, width: int) -> str:
         """Wrap text to width"""
         raise NotImplementedError("Implement wrap")

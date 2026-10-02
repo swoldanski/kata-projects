@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,16 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class TransitiveDependencies:
     """Resolve transitive dependencies"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement TransitiveDependencies")
-    
-    def resolve_dependencies(self, deps: dict) -> List[str]:
+
+    def resolve_dependencies(self, deps: dict) -> list[str]:
         """Resolve transitive dependencies"""
         raise NotImplementedError("Implement resolve_dependencies")
 
 
 # Functional alternative (for simpler katas)
-def resolve_dependencies(deps: dict) -> List[str]:
+def resolve_dependencies(deps: dict) -> list[str]:
     """Resolve transitive dependencies"""
     raise NotImplementedError("Implement resolve_dependencies")

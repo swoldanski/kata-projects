@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,16 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class Yahtzee:
     """Score Yahtzee category"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement Yahtzee")
-    
-    def score_category(self, category: str, dice: List[int]) -> int:
+
+    def score_category(self, category: str, dice: list[int]) -> int:
         """Score Yahtzee category"""
         raise NotImplementedError("Implement score_category")
 
 
 # Functional alternative (for simpler katas)
-def score_category(category: str, dice: List[int]) -> int:
+def score_category(category: str, dice: list[int]) -> int:
     """Score Yahtzee category"""
     raise NotImplementedError("Implement score_category")

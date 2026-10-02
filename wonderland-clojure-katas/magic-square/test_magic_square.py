@@ -1,7 +1,5 @@
 """Tests for magic-square."""
 
-import pytest
-from magic_square import MagicSquare, generate_magic_square
 
 
 class TestMagicSquare:

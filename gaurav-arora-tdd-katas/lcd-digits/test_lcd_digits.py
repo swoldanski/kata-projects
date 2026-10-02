@@ -1,7 +1,5 @@
 """Tests for lcd-digits."""
 
-import pytest
-from lcd_digits import LCDDigits, lcd_display
 
 
 class TestLCDDigits:

@@ -1,7 +1,5 @@
 """Tests for card-game-war."""
 
-import pytest
-from card_game_war import CardGameWar, play_war
 
 
 class TestCardGameWar:

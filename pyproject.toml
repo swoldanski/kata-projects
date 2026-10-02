@@ -33,8 +33,16 @@ addopts = "-v --tb=short"
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+[tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "C4", "PTH", "T20"]
 ignore = []
+
+# Each kata module ships a runnable `if __name__ == "__main__":` demo, which is
+# the kata's user-facing output (T201 = print found). Kata directories are
+# declared as their own ruff source roots so the exception stays scoped to the
+# kata modules and does not leak into the wider tree.
+[tool.ruff.lint.per-file-ignores]
+"*/kata*/kata*.py" = ["T201"]
 
 [tool.mypy]
 python_version = "3.12"

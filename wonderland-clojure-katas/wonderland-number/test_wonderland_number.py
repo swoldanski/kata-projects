@@ -1,7 +1,5 @@
 """Tests for wonderland-number."""
 
-import pytest
-from wonderland_number import WonderlandNumber, generate_sequence
 
 
 class TestWonderlandNumber:

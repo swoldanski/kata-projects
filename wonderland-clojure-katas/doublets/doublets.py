@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,16 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class Doublets:
     """Find word ladder"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement Doublets")
-    
-    def find_doublet_chain(self, start: str, end: str, dictionary: List[str]) -> List[str]:
+
+    def find_doublet_chain(self, start: str, end: str, dictionary: list[str]) -> list[str]:
         """Find word ladder"""
         raise NotImplementedError("Implement find_doublet_chain")
 
 
 # Functional alternative (for simpler katas)
-def find_doublet_chain(start: str, end: str, dictionary: List[str]) -> List[str]:
+def find_doublet_chain(start: str, end: str, dictionary: list[str]) -> list[str]:
     """Find word ladder"""
     raise NotImplementedError("Implement find_doublet_chain")

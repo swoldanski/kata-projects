@@ -1,7 +1,5 @@
 """Tests for poker-hands."""
 
-import pytest
-from poker_hands import PokerHands, compare_hands
 
 
 class TestPokerHands:

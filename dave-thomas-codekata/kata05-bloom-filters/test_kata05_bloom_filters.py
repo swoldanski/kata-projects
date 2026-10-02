@@ -1,20 +1,19 @@
 """Tests for Kata05: Bloom Filters - Probabilistic Data Structure."""
 
+
 import pytest
-from math import log2
 from kata05_bloom_filters import (
-    BloomFilters,
     BloomFilter,
     BloomFilterConfig,
-    BloomFilterStats,
-    InMemoryBloomFilterRepository,
     BloomFilterFunctional,
-    create_bloom_filter,
+    BloomFilters,
+    BloomFilterService,
     DoubleHashFunction,
+    FNVHashFunction,
+    InMemoryBloomFilterRepository,
     MD5HashFunction,
     SHA256HashFunction,
-    FNVHashFunction,
-    BloomFilterService,
+    create_bloom_filter,
 )
 
 
@@ -34,7 +33,7 @@ class TestBloomFilters:
         # n=1000, p=0.01 -> m ≈ 9585-9586 bits (floating point precision)
         config = BloomFilterConfig(1000, 0.01)
         assert config.optimal_bit_array_size in (9585, 9586)
-        
+
         # n=10000, p=0.001 -> m ≈ 143776 bits
         config = BloomFilterConfig(10000, 0.001)
         assert config.optimal_bit_array_size in (143775, 143776, 143777)
@@ -66,7 +65,7 @@ class TestBloomFilters:
         idx2 = hf.hash("hello", 0, 1000)
         assert idx1 == idx2
         assert 0 <= idx1 < 1000
-        
+
         # Different seeds should give different results
         idx3 = hf.hash("hello", 1, 1000)
         assert idx1 != idx3 or idx1 == 0  # Could theoretically be same
@@ -108,7 +107,7 @@ class TestBloomFilters:
         """Create Bloom filter with optimal parameters."""
         config = BloomFilterConfig(1000, 0.01)
         bf = BloomFilter.create("test", config)
-        
+
         assert bf.filter_id == "test"
         assert len(bf.bit_array) == config.optimal_bit_array_size
         assert bf.config.expected_elements == 1000
@@ -118,10 +117,10 @@ class TestBloomFilters:
         """Basic add and check operations."""
         config = BloomFilterConfig(100, 0.01)
         bf = BloomFilter.create("test", config)
-        
+
         bf.add("hello")
         bf.add("world")
-        
+
         assert "hello" in bf
         assert "world" in bf
         assert "goodbye" not in bf
@@ -130,7 +129,7 @@ class TestBloomFilters:
         """Explicit might_contain method."""
         config = BloomFilterConfig(100, 0.01)
         bf = BloomFilter.create("test", config)
-        
+
         bf.add("test")
         assert bf.might_contain("test")
         assert not bf.might_contain("missing")
@@ -139,17 +138,17 @@ class TestBloomFilters:
         """False positives are possible but rare with good config."""
         config = BloomFilterConfig(1000, 0.01)
         bf = BloomFilter.create("test", config)
-        
+
         # Add many items
         for i in range(100):
             bf.add(f"item_{i}")
-        
+
         # Test many non-existent items
         false_positives = 0
         for i in range(10000, 20000):
             if f"item_{i}" in bf:
                 false_positives += 1
-        
+
         # False positive rate should be low (< 5% with 1% target)
         fp_rate = false_positives / 10000
         assert fp_rate < 0.05  # Should be close to 1%
@@ -158,14 +157,14 @@ class TestBloomFilters:
         """Statistics tracking."""
         config = BloomFilterConfig(100, 0.01)
         bf = BloomFilter.create("test", config)
-        
+
         bf.add("hello")
         bf.add("world")
-        
+
         assert "hello" in bf
         assert "world" in bf
         assert "missing" not in bf
-        
+
         stats = bf.stats
         assert stats.elements_added == 2
         assert stats.queries_made == 3
@@ -175,7 +174,7 @@ class TestBloomFilters:
         """Empty filter check."""
         config = BloomFilterConfig(100, 0.01)
         bf = BloomFilter.create("test", config)
-        
+
         assert bf.is_empty()
         bf.add("test")
         assert not bf.is_empty()
@@ -184,7 +183,7 @@ class TestBloomFilters:
         """Fill ratio calculation."""
         config = BloomFilterConfig(10, 0.1)  # Small filter for testing
         bf = BloomFilter.create("test", config)
-        
+
         assert bf.fill_ratio() == 0.0
         bf.add("test")
         assert bf.fill_ratio() > 0.0
@@ -194,14 +193,14 @@ class TestBloomFilters:
         """Theoretical false positive rate estimation."""
         config = BloomFilterConfig(1000, 0.01)
         bf = BloomFilter.create("test", config)
-        
+
         # Before adding anything
         assert bf.estimated_false_positive_rate() == 0.0
-        
+
         # Add some elements
         for i in range(100):
             bf.add(f"item_{i}")
-        
+
         fpr = bf.estimated_false_positive_rate()
         assert 0.0 < fpr < 1.0
 
@@ -215,10 +214,10 @@ class TestBloomFilters:
         config = BloomFilterConfig(100, 0.01)
         bf = BloomFilter.create("test", config)
         bf.add("hello")
-        
+
         repo.save(bf)
         loaded = repo.load("test")
-        
+
         assert loaded is not None
         assert loaded.filter_id == "test"
         assert "hello" in loaded
@@ -228,10 +227,10 @@ class TestBloomFilters:
         repo = InMemoryBloomFilterRepository()
         config = BloomFilterConfig(100, 0.01)
         bf = BloomFilter.create("test", config)
-        
+
         repo.save(bf)
         assert repo.load("test") is not None
-        
+
         repo.delete("test")
         assert repo.load("test") is None
 
@@ -243,9 +242,9 @@ class TestBloomFilters:
         """Service creates filter with optimal parameters."""
         repo = InMemoryBloomFilterRepository()
         service = BloomFilterService(repo)
-        
+
         bf = service.create_filter("spell_check", 10000, 0.01)
-        
+
         assert bf.filter_id == "spell_check"
         assert bf.config.expected_elements == 10000
         assert bf.config.false_positive_rate == 0.01
@@ -254,10 +253,10 @@ class TestBloomFilters:
         """Service add and check operations."""
         repo = InMemoryBloomFilterRepository()
         service = BloomFilterService(repo)
-        
+
         service.create_filter("test", 100, 0.01)
         service.add_to_filter("test", "hello")
-        
+
         assert service.check_filter("test", "hello") is True
         assert service.check_filter("test", "world") is False
         assert service.check_filter("nonexistent", "hello") is None
@@ -266,11 +265,11 @@ class TestBloomFilters:
         """Service retrieves filter statistics."""
         repo = InMemoryBloomFilterRepository()
         service = BloomFilterService(repo)
-        
+
         service.create_filter("test", 100, 0.01)
         service.add_to_filter("test", "hello")
         service.check_filter("test", "hello")
-        
+
         stats = service.get_stats("test")
         assert stats is not None
         assert stats.elements_added == 1
@@ -284,7 +283,7 @@ class TestBloomFilters:
         """Facade creates filter with optimal parameters."""
         bf = BloomFilters()
         filter_obj = bf.create_filter("test", 1000, 0.01)
-        
+
         assert filter_obj.filter_id == "test"
         assert filter_obj.config.expected_elements == 1000
 
@@ -292,7 +291,7 @@ class TestBloomFilters:
         """Facade add and check."""
         bf = BloomFilters()
         bf.create_filter("test", 100, 0.01)
-        
+
         assert bf.add("test", "hello")
         assert bf.check("test", "hello") is True
         assert bf.check("test", "world") is False
@@ -304,7 +303,7 @@ class TestBloomFilters:
         bf.create_filter("test", 100, 0.01)
         bf.add("test", "hello")
         bf.check("test", "hello")
-        
+
         stats = bf.get_stats("test")
         assert stats is not None
         assert stats.elements_added == 1
@@ -313,10 +312,10 @@ class TestBloomFilters:
         """Facade estimated FPR."""
         bf = BloomFilters()
         bf.create_filter("test", 1000, 0.01)
-        
+
         for i in range(50):
             bf.add("test", f"item_{i}")
-        
+
         fpr = bf.get_estimated_fpr("test")
         assert 0.0 < fpr < 1.0
 
@@ -324,7 +323,7 @@ class TestBloomFilters:
         """Facade fill ratio."""
         bf = BloomFilters()
         bf.create_filter("test", 100, 0.1)
-        
+
         assert bf.get_fill_ratio("test") == 0.0
         bf.add("test", "hello")
         assert bf.get_fill_ratio("test") > 0.0
@@ -336,10 +335,10 @@ class TestBloomFilters:
     def test_functional_bloom_filter(self):
         """Functional Bloom filter basic operations."""
         bf = BloomFilterFunctional(1000, 7)
-        
+
         bf.add("hello")
         bf.add("world")
-        
+
         assert "hello" in bf
         assert "world" in bf
         assert "goodbye" not in bf
@@ -347,9 +346,9 @@ class TestBloomFilters:
     def test_functional_add_multiple(self):
         """Functional add_multiple."""
         bf = BloomFilterFunctional(1000, 7)
-        
+
         bf.add_multiple(["apple", "banana", "cherry"])
-        
+
         assert "apple" in bf
         assert "banana" in bf
         assert "cherry" in bf
@@ -358,14 +357,14 @@ class TestBloomFilters:
         """Functional check_multiple."""
         bf = BloomFilterFunctional(1000, 7)
         bf.add_multiple(["a", "b", "c"])
-        
+
         results = bf.check_multiple(["a", "b", "d", "c"])
         assert results == [True, True, False, True]
 
     def test_create_bloom_filter_factory(self):
         """Factory function creates filter with optimal params."""
         bf = create_bloom_filter(1000, 0.01)
-        
+
         assert isinstance(bf, BloomFilterFunctional)
         assert bf.m in (9585, 9586)  # Optimal bit array size
         assert bf.k == 7     # Optimal hash count
@@ -379,11 +378,11 @@ class TestBloomFilters:
         hf = MD5HashFunction()
         m = 1000
         counts = [0] * m
-        
+
         for i in range(10000):
             idx = hf.hash(f"item_{i}", 0, m)
             counts[idx] += 1
-        
+
         # Check rough uniformity (no bucket should have > 3x expected)
         expected = 10000 / 1000
         for count in counts:
@@ -395,12 +394,12 @@ class TestBloomFilters:
         m = 1000
         k = 7
         counts = [0] * m
-        
+
         for i in range(1000):
             indices = dh.hash_k(f"item_{i}", k, m)
             for idx in indices:
                 counts[idx] += 1
-        
+
         expected = 7000 / 1000
         for count in counts:
             assert count < expected * 3
@@ -413,7 +412,7 @@ class TestBloomFilters:
         """Empty string should work."""
         config = BloomFilterConfig(100, 0.01)
         bf = BloomFilter.create("test", config)
-        
+
         bf.add("")
         assert "" in bf
 
@@ -421,11 +420,11 @@ class TestBloomFilters:
         """Unicode strings should work."""
         config = BloomFilterConfig(100, 0.01)
         bf = BloomFilter.create("test", config)
-        
+
         bf.add("hello")
         bf.add("世界")
         bf.add("🌍")
-        
+
         assert "hello" in bf
         assert "世界" in bf
         assert "🌍" in bf
@@ -434,7 +433,7 @@ class TestBloomFilters:
         """Very long strings should work."""
         config = BloomFilterConfig(100, 0.01)
         bf = BloomFilter.create("test", config)
-        
+
         long_string = "a" * 10000
         bf.add(long_string)
         assert long_string in bf
@@ -443,10 +442,10 @@ class TestBloomFilters:
         """Adding same item multiple times should be idempotent."""
         config = BloomFilterConfig(100, 0.01)
         bf = BloomFilter.create("test", config)
-        
+
         for _ in range(10):
             bf.add("test")
-        
+
         assert "test" in bf
         assert bf.stats.elements_added == 10  # Each add counts
 
@@ -454,7 +453,7 @@ class TestBloomFilters:
         """Bloom filter should be case-sensitive."""
         config = BloomFilterConfig(100, 0.01)
         bf = BloomFilter.create("test", config)
-        
+
         bf.add("Hello")
         assert "Hello" in bf
         assert "hello" not in bf
@@ -467,11 +466,11 @@ class TestBloomFilters:
     def test_cqrs_separation(self):
         """Commands and queries are separated."""
         bf = BloomFilters()
-        
+
         # Commands modify state
         bf.create_filter("test", 100, 0.01)
         bf.add("test", "hello")
-        
+
         # Queries read state
         assert bf.check("test", "hello") is True
         assert bf.check("test", "world") is False
@@ -481,7 +480,7 @@ class TestBloomFilters:
         repo = InMemoryBloomFilterRepository()
         config = BloomFilterConfig(100, 0.01)
         bf = BloomFilter.create("test", config)
-        
+
         repo.save(bf)
         loaded = repo.load("test")
         assert loaded is not None
@@ -490,8 +489,8 @@ class TestBloomFilters:
         """BloomFilterService encapsulates business logic."""
         repo = InMemoryBloomFilterRepository()
         service = BloomFilterService(repo)
-        
-        bf = service.create_filter("test", 100, 0.01)
+
+        service.create_filter("test", 100, 0.01)
         assert service.add_to_filter("test", "hello")
         assert service.check_filter("test", "hello") is True
 
@@ -502,7 +501,7 @@ class TestBloomFilters:
     def test_functional_create_bloom_filter(self):
         """Factory function creates properly configured filter."""
         bf = create_bloom_filter(1000, 0.01)
-        
+
         assert isinstance(bf, BloomFilterFunctional)
         assert bf.m in (9585, 9586)
         assert bf.k == 7
@@ -510,7 +509,7 @@ class TestBloomFilters:
     def test_functional_interface_compatibility(self):
         """Functional interface should work like built-in set."""
         bf = create_bloom_filter(1000, 0.01)
-        
+
         bf.add("test")
         assert "test" in bf
         assert "other" not in bf
@@ -518,13 +517,13 @@ class TestBloomFilters:
     def test_multiple_filters_independent(self):
         """Multiple filters should be independent."""
         bf = BloomFilters()
-        
+
         bf.create_filter("filter1", 100, 0.01)
         bf.create_filter("filter2", 100, 0.01)
-        
+
         bf.add("filter1", "hello")
         bf.add("filter2", "world")
-        
+
         assert "hello" in bf._repository.load("filter1")
         assert "hello" not in bf._repository.load("filter2")
         assert "world" in bf._repository.load("filter2")

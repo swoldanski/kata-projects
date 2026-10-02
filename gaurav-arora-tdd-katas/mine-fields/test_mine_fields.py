@@ -1,7 +1,5 @@
 """Tests for mine-fields."""
 
-import pytest
-from mine_fields import MineFields, generate_field
 
 
 class TestMineFields:

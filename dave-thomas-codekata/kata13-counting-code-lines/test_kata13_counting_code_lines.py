@@ -1,7 +1,5 @@
 """Tests for kata13-counting-code-lines."""
 
-import pytest
-from kata13_counting_code_lines import CountingCodeLines, count_lines
 
 
 class TestCountingCodeLines:

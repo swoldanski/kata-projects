@@ -1,7 +1,5 @@
 """Tests for bowling-game-kata."""
 
-import pytest
-from bowling_game_kata import BowlingGame, BowlingGame
 
 
 class TestBowlingGame:

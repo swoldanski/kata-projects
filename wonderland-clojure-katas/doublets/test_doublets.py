@@ -1,7 +1,5 @@
 """Tests for doublets."""
 
-import pytest
-from doublets import Doublets, find_doublet_chain
 
 
 class TestDoublets:

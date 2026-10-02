@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,16 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class MagicSquare:
     """Generate NxN magic square"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement MagicSquare")
-    
-    def generate_magic_square(self, n: int) -> List[List[int]]:
+
+    def generate_magic_square(self, n: int) -> list[list[int]]:
         """Generate NxN magic square"""
         raise NotImplementedError("Implement generate_magic_square")
 
 
 # Functional alternative (for simpler katas)
-def generate_magic_square(n: int) -> List[List[int]]:
+def generate_magic_square(n: int) -> list[list[int]]:
     """Generate NxN magic square"""
     raise NotImplementedError("Implement generate_magic_square")

@@ -1,7 +1,5 @@
 """Tests for kata21-simple-lists."""
 
-import pytest
-from kata21_simple_lists import SimpleLists, LinkedList
 
 
 class TestSimpleLists:

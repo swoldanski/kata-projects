@@ -2,9 +2,9 @@
 
 from kata06_anagrams import (
     AnagramGroup,
+    Anagrams,
     AnagramService,
     AnagramStats,
-    Anagrams,
     InMemoryAnagramRepository,
     SignatureStrategy,
     Word,

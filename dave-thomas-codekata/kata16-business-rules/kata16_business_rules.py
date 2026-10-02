@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,13 +18,10 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class BusinessRules:
     """Business rules engine"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement BusinessRules")
-    
-    def RulesEngine(self, ) -> None:
-        """Business rules engine"""
-        raise NotImplementedError("Implement RulesEngine")
+
 
 
 # Functional alternative (for simpler katas)

@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,16 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class WonderlandNumber:
     """Generate number sequence"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement WonderlandNumber")
-    
-    def generate_sequence(self, name: str, n: int) -> List[int]:
+
+    def generate_sequence(self, name: str, n: int) -> list[int]:
         """Generate number sequence"""
         raise NotImplementedError("Implement generate_sequence")
 
 
 # Functional alternative (for simpler katas)
-def generate_sequence(name: str, n: int) -> List[int]:
+def generate_sequence(name: str, n: int) -> list[int]:
     """Generate number sequence"""
     raise NotImplementedError("Implement generate_sequence")

@@ -1,20 +1,21 @@
 """Tests for Kata04: Data Munging - Weather and Soccer Data Parsing."""
 
-import pytest
 from pathlib import Path
+
+import pytest
 from kata04_data_munging import (
+    ColumnParser,
     DataMunging,
-    find_min_spread_day,
-    find_min_goal_diff_team,
-    parse_weather_data,
-    parse_soccer_data,
-    WeatherRecord,
+    DataMungingService,
+    LocalFileRepository,
+    SoccerParser,
     SoccerRecord,
     WeatherParser,
-    SoccerParser,
-    ColumnParser,
-    LocalFileRepository,
-    DataMungingService,
+    WeatherRecord,
+    find_min_goal_diff_team,
+    find_min_spread_day,
+    parse_soccer_data,
+    parse_weather_data,
 )
 
 
@@ -69,7 +70,7 @@ Aston_Villa    38  12  14  12  46  47  -1   48"""
 
     def test_find_min_spread_day_class(self):
         """Class-based interface: find day with min spread."""
-        dm = DataMunging()
+        _ = DataMunging()
         # We'll test with the functional version since we don't have files
         # The class method uses file-based, so we test the parser directly
         parser = WeatherParser()
@@ -95,7 +96,8 @@ Aston_Villa    38  12  14  12  46  47  -1   48"""
 invalid line
  4  79  59"""
         records = parse_weather_data(bad_data)
-        # Should only parse valid lines (day 1 has only 2 cols, day 2 has invalid temp, day 3 valid, day 4 valid)
+        # Only valid lines parse: day 1 has 2 cols, day 2 has an invalid
+        # temperature, days 3 and 4 are valid.
         assert len(records) == 2
         assert records[0].day == 3
         assert records[1].day == 4
@@ -170,7 +172,7 @@ Tottenham     38  20  10 8  65  40  25  68"""
         """ColumnParser is shared between weather and soccer parsers."""
         weather_parser = WeatherParser()
         soccer_parser = SoccerParser()
-        
+
         # Both use ColumnParser internally
         assert isinstance(weather_parser.parser, ColumnParser)
         assert isinstance(soccer_parser.parser, ColumnParser)
@@ -232,18 +234,18 @@ Tottenham     38  20  10 8  65  40  25  68"""
     def test_data_munging_service(self):
         """DataMungingService coordinates parsing."""
         repo = LocalFileRepository()
-        service = DataMungingService(repo)
-        
+        _ = DataMungingService(repo)
+
         # Test with sample data (using string-based parsers)
         weather_parser = WeatherParser()
         soccer_parser = SoccerParser()
-        
+
         weather_records = list(weather_parser.parse(iter(self.SAMPLE_WEATHER.split('\n'))))
         soccer_records = list(soccer_parser.parse(iter(self.SAMPLE_SOCCER.split('\n'))))
-        
+
         min_weather = min(weather_records, key=lambda r: r.spread)
         min_soccer = min(soccer_records, key=lambda r: abs(r.goal_diff))
-        
+
         assert min_weather.day == 2
         assert min_soccer.team == "Aston_Villa"
 
@@ -256,7 +258,7 @@ Tottenham     38  20  10 8  65  40  25  68"""
         repo = LocalFileRepository()
         test_file = tmp_path / "test.dat"
         test_file.write_text("line1\nline2\nline3")
-        
+
         lines = list(repo.read_lines(test_file))
         assert lines == ["line1", "line2", "line3"]
         assert repo.exists(test_file)
@@ -296,7 +298,7 @@ Tottenham     38  20  10 8  65  40  25  68"""
         weather = WeatherRecord(day=1, max_temp=88, min_temp=59, spread=29)
         with pytest.raises(AttributeError):
             weather.day = 2
-        
+
         soccer = SoccerRecord(team="Arsenal", played=38, won=26, lost=9, drawn=3,
                               goals_for=79, goals_against=36, goal_diff=43, points=87)
         with pytest.raises(AttributeError):

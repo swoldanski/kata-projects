@@ -1,7 +1,5 @@
 """Tests for kata-event-listener."""
 
-import pytest
-from kata_event_listener import EventListener, EventDispatcher
 
 
 class TestEventListener:

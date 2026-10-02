@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,16 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class WordChains:
     """Find shortest word chain"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement WordChains")
-    
-    def word_chain(self, start: str, end: str, dictionary: List[str]) -> List[str]:
+
+    def word_chain(self, start: str, end: str, dictionary: list[str]) -> list[str]:
         """Find shortest word chain"""
         raise NotImplementedError("Implement word_chain")
 
 
 # Functional alternative (for simpler katas)
-def word_chain(start: str, end: str, dictionary: List[str]) -> List[str]:
+def word_chain(start: str, end: str, dictionary: list[str]) -> list[str]:
     """Find shortest word chain"""
     raise NotImplementedError("Implement word_chain")

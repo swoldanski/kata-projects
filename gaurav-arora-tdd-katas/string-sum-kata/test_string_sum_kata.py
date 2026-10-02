@@ -1,7 +1,5 @@
 """Tests for string-sum-kata."""
 
-import pytest
-from string_sum_kata import StringSum, string_sum
 
 
 class TestStringSum:

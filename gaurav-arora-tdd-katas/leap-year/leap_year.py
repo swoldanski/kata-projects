@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,10 +18,10 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class LeapYear:
     """Check if leap year"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement LeapYear")
-    
+
     def is_leap_year(self, year: int) -> bool:
         """Check if leap year"""
         raise NotImplementedError("Implement is_leap_year")

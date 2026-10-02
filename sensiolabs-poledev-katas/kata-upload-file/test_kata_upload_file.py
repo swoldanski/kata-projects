@@ -1,7 +1,5 @@
 """Tests for kata-upload-file."""
 
-import pytest
-from kata_upload_file import FileUpload, FileUploadHandler
 
 
 class TestFileUpload:

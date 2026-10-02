@@ -1,7 +1,5 @@
 """Tests for kata11-sorting-it-out."""
 
-import pytest
-from kata11_sorting_it_out import SortingItOut, sort
 
 
 class TestSortingItOut:

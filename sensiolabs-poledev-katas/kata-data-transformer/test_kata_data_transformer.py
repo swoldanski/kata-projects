@@ -1,7 +1,5 @@
 """Tests for kata-data-transformer."""
 
-import pytest
-from kata_data_transformer import DataTransformer, DataTransformer
 
 
 class TestDataTransformer:

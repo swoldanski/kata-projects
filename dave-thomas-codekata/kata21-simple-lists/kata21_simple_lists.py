@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,13 +18,10 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class SimpleLists:
     """Linked list data structure"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement SimpleLists")
-    
-    def LinkedList(self, ) -> None:
-        """Linked list data structure"""
-        raise NotImplementedError("Implement LinkedList")
+
 
 
 # Functional alternative (for simpler katas)

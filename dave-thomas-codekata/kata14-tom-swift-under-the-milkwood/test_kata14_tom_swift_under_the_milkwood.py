@@ -1,7 +1,5 @@
 """Tests for kata14-tom-swift-under-the-milkwood."""
 
-import pytest
-from kata14_tom_swift_under_the_milkwood import TomSwifties, generate_tom_swifty
 
 
 class TestTomSwifties:

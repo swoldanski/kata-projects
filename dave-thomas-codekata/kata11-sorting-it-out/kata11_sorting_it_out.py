@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,16 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class SortingItOut:
     """Sort using specified algorithm"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement SortingItOut")
-    
-    def sort(self, arr: List[int], algorithm: str) -> List[int]:
+
+    def sort(self, arr: list[int], algorithm: str) -> list[int]:
         """Sort using specified algorithm"""
         raise NotImplementedError("Implement sort")
 
 
 # Functional alternative (for simpler katas)
-def sort(arr: List[int], algorithm: str) -> List[int]:
+def sort(arr: list[int], algorithm: str) -> list[int]:
     """Sort using specified algorithm"""
     raise NotImplementedError("Implement sort")

@@ -1,7 +1,5 @@
 """Tests for kata20-klondike."""
 
-import pytest
-from kata20_klondike import Klondike, KlondikeGame
 
 
 class TestKlondike:

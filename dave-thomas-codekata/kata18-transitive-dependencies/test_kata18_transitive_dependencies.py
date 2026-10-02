@@ -1,7 +1,5 @@
 """Tests for kata18-transitive-dependencies."""
 
-import pytest
-from kata18_transitive_dependencies import TransitiveDependencies, resolve_dependencies
 
 
 class TestTransitiveDependencies:

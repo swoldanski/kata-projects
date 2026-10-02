@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,6 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class DataTransformer:
     """Transform data between formats"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement DataTransformer")
-    
-    def DataTransformer(self, ) -> None:
-        """Transform data between formats"""
-        raise NotImplementedError("Implement DataTransformer")
-
-
-# Functional alternative (for simpler katas)
-def DataTransformer() -> None:
-    """Transform data between formats"""
-    raise NotImplementedError("Implement DataTransformer")

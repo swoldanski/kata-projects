@@ -1,7 +1,5 @@
 """Tests for prime-factor-kata."""
 
-import pytest
-from prime_factor_kata import PrimeFactor, prime_factors
 
 
 class TestPrimeFactor:

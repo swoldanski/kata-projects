@@ -2,18 +2,26 @@
 
 import pytest
 from kata02_karate_chop import (
+    BinarySearchService,
+    InMemorySearchHistoryRepository,
     KarateChop,
+    SearchAlgorithm,
+    SearchResult,
     chop,
+    chop_builtin,
+    chop_functional,
+    chop_iterative,
+    chop_recursive,
+    chop_tail_recursive,
+)
+
+ALL_CHOP_IMPLEMENTATIONS = [
     chop_iterative,
     chop_recursive,
     chop_functional,
     chop_builtin,
     chop_tail_recursive,
-    SearchAlgorithm,
-    SearchResult,
-    BinarySearchService,
-    InMemorySearchHistoryRepository,
-)
+]
 
 
 class TestKarateChop:
@@ -30,52 +38,52 @@ class TestKarateChop:
 
     def test_chop_empty_array(self):
         """chop(3, []) => -1"""
-        for func in [chop_iterative, chop_recursive, chop_functional, chop_builtin, chop_tail_recursive]:
+        for func in ALL_CHOP_IMPLEMENTATIONS:
             assert func(3, []) == -1
 
     def test_chop_single_element_not_found(self):
         """chop(3, [1]) => -1"""
-        for func in [chop_iterative, chop_recursive, chop_functional, chop_builtin, chop_tail_recursive]:
+        for func in ALL_CHOP_IMPLEMENTATIONS:
             assert func(3, [1]) == -1
 
     def test_chop_single_element_found(self):
         """chop(1, [1]) => 0"""
-        for func in [chop_iterative, chop_recursive, chop_functional, chop_builtin, chop_tail_recursive]:
+        for func in ALL_CHOP_IMPLEMENTATIONS:
             assert func(1, [1]) == 0
 
     def test_chop_first_element(self):
         """chop(1, [1, 3, 5]) => 0"""
-        for func in [chop_iterative, chop_recursive, chop_functional, chop_builtin, chop_tail_recursive]:
+        for func in ALL_CHOP_IMPLEMENTATIONS:
             assert func(1, [1, 3, 5]) == 0
 
     def test_chop_middle_element(self):
         """chop(3, [1, 3, 5]) => 1"""
-        for func in [chop_iterative, chop_recursive, chop_functional, chop_builtin, chop_tail_recursive]:
+        for func in ALL_CHOP_IMPLEMENTATIONS:
             assert func(3, [1, 3, 5]) == 1
 
     def test_chop_last_element(self):
         """chop(5, [1, 3, 5]) => 2"""
-        for func in [chop_iterative, chop_recursive, chop_functional, chop_builtin, chop_tail_recursive]:
+        for func in ALL_CHOP_IMPLEMENTATIONS:
             assert func(5, [1, 3, 5]) == 2
 
     def test_chop_before_first(self):
         """chop(0, [1, 3, 5]) => -1"""
-        for func in [chop_iterative, chop_recursive, chop_functional, chop_builtin, chop_tail_recursive]:
+        for func in ALL_CHOP_IMPLEMENTATIONS:
             assert func(0, [1, 3, 5]) == -1
 
     def test_chop_between_first_and_second(self):
         """chop(2, [1, 3, 5]) => -1"""
-        for func in [chop_iterative, chop_recursive, chop_functional, chop_builtin, chop_tail_recursive]:
+        for func in ALL_CHOP_IMPLEMENTATIONS:
             assert func(2, [1, 3, 5]) == -1
 
     def test_chop_between_second_and_third(self):
         """chop(4, [1, 3, 5]) => -1"""
-        for func in [chop_iterative, chop_recursive, chop_functional, chop_builtin, chop_tail_recursive]:
+        for func in ALL_CHOP_IMPLEMENTATIONS:
             assert func(4, [1, 3, 5]) == -1
 
     def test_chop_after_last(self):
         """chop(6, [1, 3, 5]) => -1"""
-        for func in [chop_iterative, chop_recursive, chop_functional, chop_builtin, chop_tail_recursive]:
+        for func in ALL_CHOP_IMPLEMENTATIONS:
             assert func(6, [1, 3, 5]) == -1
 
     # =========================================================================
@@ -123,13 +131,15 @@ class TestKarateChop:
             (0, [1, 3, 5, 7, 9]),
             (10, [1, 3, 5, 7, 9]),
         ]
-        
-        functions = [chop_iterative, chop_recursive, chop_functional, chop_builtin, chop_tail_recursive]
-        
+
+        functions = ALL_CHOP_IMPLEMENTATIONS
+
         for target, test_arr in test_cases:
             results = [f(target, test_arr) for f in functions]
             # All should be equal
-            assert all(r == results[0] for r in results), f"Mismatch for chop({target}, {test_arr}): {results}"
+            assert all(r == results[0] for r in results), (
+                f"Mismatch for chop({target}, {test_arr}): {results}"
+            )
 
     # =========================================================================
     # SearchResult Details
@@ -270,10 +280,10 @@ class TestKarateChop:
         self.kc.search_one(3, self.arr, SearchAlgorithm.ITERATIVE)
         self.kc.search_one(5, self.arr, SearchAlgorithm.ITERATIVE)
         self.kc.search_one(7, self.arr, SearchAlgorithm.RECURSIVE)
-        
+
         history = self.kc.get_history()
         assert len(history) == 3
-        
+
         iterative_history = self.kc.get_history(SearchAlgorithm.ITERATIVE)
         assert len(iterative_history) == 2
 
@@ -281,7 +291,7 @@ class TestKarateChop:
         """Statistics should be tracked."""
         self.kc.search_one(3, self.arr, SearchAlgorithm.ITERATIVE)
         self.kc.search_one(5, self.arr, SearchAlgorithm.ITERATIVE)
-        
+
         stats = self.kc.get_stats(SearchAlgorithm.ITERATIVE)
         assert stats["count"] == 2
         assert stats["avg_iterations"] > 0
@@ -311,7 +321,7 @@ class TestKarateChop:
         """BinarySearchService should encapsulate all algorithms."""
         repo = InMemorySearchHistoryRepository()
         service = BinarySearchService(repo)
-        
+
         # All algorithms accessible
         for algo in SearchAlgorithm:
             result = service.search(3, [1, 3, 5], algo)
@@ -349,13 +359,13 @@ class TestKarateChop:
     def test_binary_search_correctness_property(self):
         """For any sorted array, if element exists, returned index should have that value."""
         import random
-        
+
         # Test with various sorted arrays
         for size in [1, 2, 3, 5, 10, 20, 50, 100]:
             arr = list(range(0, size * 2, 2))  # Even numbers: 0, 2, 4, ...
             for _ in range(10):
                 target = random.choice(arr)
-                for func in [chop_iterative, chop_recursive, chop_functional, chop_builtin, chop_tail_recursive]:
+                for func in ALL_CHOP_IMPLEMENTATIONS:
                     idx = func(target, arr)
                     assert idx != -1
                     assert arr[idx] == target
@@ -364,14 +374,14 @@ class TestKarateChop:
         """If target not in array, should return -1."""
         arr = list(range(100))
         for target in [-1, 100, 101, 150]:  # All not in [0..99]
-            for func in [chop_iterative, chop_recursive, chop_functional, chop_builtin, chop_tail_recursive]:
+            for func in ALL_CHOP_IMPLEMENTATIONS:
                 assert func(int(target), arr) == -1
 
     def test_all_algorithms_handle_duplicates_consistently(self):
         """With duplicates, should return some valid index (binary search finds one)."""
         arr = [1, 2, 2, 2, 3, 4, 5]
         target = 2
-        results = [f(target, arr) for f in [chop_iterative, chop_recursive, chop_functional, chop_builtin, chop_tail_recursive]]
+        results = [f(target, arr) for f in ALL_CHOP_IMPLEMENTATIONS]
         # All should find some index with value 2
         for idx in results:
             assert idx != -1

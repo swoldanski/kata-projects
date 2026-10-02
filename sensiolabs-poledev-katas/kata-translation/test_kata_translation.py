@@ -1,7 +1,5 @@
 """Tests for kata-translation."""
 
-import pytest
-from kata_translation import Translation, TranslationManager
 
 
 class TestTranslation:

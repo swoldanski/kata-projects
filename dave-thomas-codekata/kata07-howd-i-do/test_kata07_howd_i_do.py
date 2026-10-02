@@ -1,7 +1,5 @@
 """Tests for kata07-howd-i-do."""
 
-import pytest
-from kata07_howd_i_do import HowdIDo, score_quiz
 
 
 class TestHowdIDo:

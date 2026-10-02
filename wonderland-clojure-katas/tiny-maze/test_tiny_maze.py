@@ -1,7 +1,5 @@
 """Tests for tiny-maze."""
 
-import pytest
-from tiny_maze import TinyMaze, Maze
 
 
 class TestTinyMaze:

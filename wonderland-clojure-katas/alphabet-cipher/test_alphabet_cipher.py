@@ -1,7 +1,5 @@
 """Tests for alphabet-cipher."""
 
-import pytest
-from alphabet_cipher import AlphabetCipher, AlphabetCipher
 
 
 class TestAlphabetCipher:

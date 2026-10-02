@@ -1,7 +1,5 @@
 """Tests for kata12-best-sellers."""
 
-import pytest
-from kata12_best_sellers import BestSellers, TopK
 
 
 class TestBestSellers:

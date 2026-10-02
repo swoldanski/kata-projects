@@ -1,16 +1,17 @@
 """Tests for Kata01: Supermarket Pricing."""
 
-import pytest
 from decimal import Decimal
+
+import pytest
 from kata01_supermarket_pricing import (
-    PricingEngine,
-    Money,
-    Quantity,
-    PricingType,
-    PricingRule,
-    Product,
     InMemoryProductRepository,
+    Money,
+    PricingEngine,
+    PricingRule,
     PricingService,
+    PricingType,
+    Product,
+    Quantity,
     design_pricing_model,
 )
 
@@ -28,15 +29,15 @@ class TestSupermarketPricing:
         # Simple pricing: beans at $0.65 each
         self.engine.create_product("beans", "Canned Beans")
         self.engine.add_simple_pricing("beans", Money(Decimal("0.65")))
-        
+
         # Weight-based: apples at $1.99/lb
         self.engine.create_product("apples", "Apples", default_unit="lb")
         self.engine.add_weight_pricing("apples", Money(Decimal("1.99")))
-        
+
         # Volume: cereal 3 for $1.00, $0.65 each for remainder
         self.engine.create_product("cereal", "Cereal Boxes")
         self.engine.add_volume_pricing("cereal", 3, Money(Decimal("1.00")), Money(Decimal("0.65")))
-        
+
         # Buy 2 get 1 free: orange juice at $2.00 each
         self.engine.create_product("orange_juice", "Orange Juice")
         self.engine.add_buy_n_get_m_pricing("orange_juice", 2, 1, Money(Decimal("2.00")))
@@ -278,7 +279,10 @@ class TestPricingRules:
     def test_volume_rule_requires_volume_params(self):
         """VOLUME rule requires volume_quantity and volume_price."""
         with pytest.raises(ValueError, match="volume_quantity"):
-            PricingRule(product_id="p1", pricing_type=PricingType.VOLUME, volume_price=Money(Decimal("1")))
+            PricingRule(
+                product_id="p1", pricing_type=PricingType.VOLUME,
+                volume_price=Money(Decimal("1")),
+            )
 
     def test_weight_rule_requires_price(self):
         """WEIGHT rule requires price_per_unit."""

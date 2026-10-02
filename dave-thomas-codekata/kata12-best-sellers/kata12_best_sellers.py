@@ -3,8 +3,7 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
-
+from typing import Any  # noqa: F401  (import kept for the generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -15,18 +14,8 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 # Use in-memory collections (lists, dicts, sets) for state
 
 
-class BestSellers:
+class TopK:
     """Maintain top K items from stream"""
-    
-    def __init__(self):
-        raise NotImplementedError("Implement BestSellers")
-    
-    def TopK(self, ) -> None:
-        """Maintain top K items from stream"""
+
+    def __init__(self) -> None:
         raise NotImplementedError("Implement TopK")
-
-
-# Functional alternative (for simpler katas)
-def TopK() -> None:
-    """Maintain top K items from stream"""
-    raise NotImplementedError("Implement TopK")

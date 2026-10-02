@@ -1,7 +1,5 @@
 """Tests for kata16-business-rules."""
 
-import pytest
-from kata16_business_rules import BusinessRules, RulesEngine
 
 
 class TestBusinessRules:

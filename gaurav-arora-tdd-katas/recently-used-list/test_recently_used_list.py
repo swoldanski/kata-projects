@@ -1,7 +1,5 @@
 """Tests for recently-used-list."""
 
-import pytest
-from recently_used_list import RecentlyUsedList, RecentlyUsedList
 
 
 class TestRecentlyUsedList:

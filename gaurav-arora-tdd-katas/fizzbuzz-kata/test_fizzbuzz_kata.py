@@ -1,7 +1,5 @@
 """Tests for fizzbuzz-kata."""
 
-import pytest
-from fizzbuzz_kata import FizzBuzz, fizzbuzz
 
 
 class TestFizzBuzz:

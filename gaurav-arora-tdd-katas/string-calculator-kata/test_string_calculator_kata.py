@@ -1,7 +1,5 @@
 """Tests for string-calculator-kata."""
 
-import pytest
-from string_calculator_kata import StringCalculator, add
 
 
 class TestStringCalculator:

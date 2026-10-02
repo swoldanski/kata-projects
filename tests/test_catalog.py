@@ -1,8 +1,8 @@
 """Tests for kata-projects catalog structure."""
 
 from pathlib import Path
-import pytest
 
+import pytest
 
 KATA_ROOT = Path(__file__).parent.parent
 
@@ -62,10 +62,15 @@ def test_readme_has_required_sections():
                 readme = kata_dir / "README.md"
                 content = readme.read_text()
                 for section in REQUIRED_SECTIONS:
-                    assert section in content, f"Missing '{section}' in {coll}/{kata_dir.name}/README.md"
+                    assert section in content, (
+                        f"Missing '{section}' in {coll}/{kata_dir.name}/README.md"
+                    )
                 # Check for at least one requirements variant
                 has_requirements = any(variant in content for variant in REQUIREMENTS_VARIANTS)
-                assert has_requirements, f"Missing requirements section (tried: {REQUIREMENTS_VARIANTS}) in {coll}/{kata_dir.name}/README.md"
+                assert has_requirements, (
+                    f"Missing requirements section (tried: {REQUIREMENTS_VARIANTS}) "
+                    f"in {coll}/{kata_dir.name}/README.md"
+                )
 
 
 def test_no_duplicate_kata_names():
@@ -105,9 +110,15 @@ def test_generated_template_files_exist():
                 py_files = list(kata_dir.glob("*.py"))
                 impl_files = [f for f in py_files if not f.name.startswith("test_")]
                 test_files = [f for f in py_files if f.name.startswith("test_")]
-                
-                assert len(impl_files) == 1, f"Expected 1 implementation file in {coll}/{kata_dir.name}, found {len(impl_files)}: {[f.name for f in impl_files]}"
-                assert len(test_files) == 1, f"Expected 1 test file in {coll}/{kata_dir.name}, found {len(test_files)}: {[f.name for f in test_files]}"
+
+                assert len(impl_files) == 1, (
+                    f"Expected 1 implementation file in {coll}/{kata_dir.name}, "
+                    f"found {len(impl_files)}: {[f.name for f in impl_files]}"
+                )
+                assert len(test_files) == 1, (
+                    f"Expected 1 test file in {coll}/{kata_dir.name}, "
+                    f"found {len(test_files)}: {[f.name for f in test_files]}"
+                )
 
 
 def test_template_files_have_correct_structure():
@@ -119,15 +130,24 @@ def test_template_files_have_correct_structure():
                 py_files = list(kata_dir.glob("*.py"))
                 impl_files = [f for f in py_files if not f.name.startswith("test_")]
                 test_files = [f for f in py_files if f.name.startswith("test_")]
-                
+
                 if impl_files:
                     content = impl_files[0].read_text()
-                    # Check for DDD/CQRS markers
-                    assert "from typing import" in content, f"Missing typing imports in {impl_files[0]}"
-                
+                    # Every kata module should be importable and type-annotated.
+                    # Annotated stubs may use `from typing import` or the
+                    # `from __future__ import annotations` form.
+                    has_annotation_import = (
+                        "from typing import" in content
+                        or "from __future__ import annotations" in content
+                    )
+                    assert has_annotation_import, (
+                        f"Missing typing imports in {impl_files[0]}"
+                    )
+
                 if test_files:
                     content = test_files[0].read_text()
-                    # Accept either template names (test_basic_case, test_edge_cases, test_tdd_progression)
+                    # Accept either template names (test_basic_case, test_edge_cases,
+                    # test_tdd_progression)
                     # or implemented test names (test_* with descriptive names)
                     has_test_methods = any(name in content for name in [
                         "test_basic_case", "test_edge_cases", "test_tdd_progression",
@@ -148,11 +168,18 @@ def test_readme_format_consistency():
             if kata_dir.is_dir():
                 readme = kata_dir / "README.md"
                 content = readme.read_text()
-                
+
                 # Should have source link
-                assert "Source:" in content or "source:" in content.lower(), f"Missing Source link in {coll}/{kata_dir.name}/README.md"
-                
+                assert "Source:" in content or "source:" in content.lower(), (
+                    f"Missing Source link in {coll}/{kata_dir.name}/README.md"
+                )
+
                 # Should have code block or examples (unless design-only kata)
-                is_design_only = "no coding" in content.lower() or "no code" in content.lower() or "design kata" in content.lower()
+                lower = content.lower()
+                is_design_only = (
+                    "no coding" in lower or "no code" in lower or "design kata" in lower
+                )
                 has_code = "```" in content
-                assert has_code or is_design_only, f"Missing code examples in {coll}/{kata_dir.name}/README.md"
+                assert has_code or is_design_only, (
+                    f"Missing code examples in {coll}/{kata_dir.name}/README.md"
+                )

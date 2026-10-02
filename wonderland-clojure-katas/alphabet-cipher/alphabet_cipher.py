@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,10 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class AlphabetCipher:
     """Substitution cipher with keyword"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement AlphabetCipher")
-    
+
     def AlphabetCipher(self, keyword: str) -> None:
         """Substitution cipher with keyword"""
         raise NotImplementedError("Implement AlphabetCipher")
-
-
-# Functional alternative (for simpler katas)
-def AlphabetCipher(keyword: str) -> None:
-    """Substitution cipher with keyword"""
-    raise NotImplementedError("Implement AlphabetCipher")

@@ -1,7 +1,5 @@
 """Tests for fox-goose-bag-of-corn."""
 
-import pytest
-from fox_goose_bag_of_corn import FoxGooseBagOfCorn, solve_river_crossing
 
 
 class TestFoxGooseBagOfCorn:

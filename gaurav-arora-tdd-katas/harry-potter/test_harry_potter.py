@@ -1,7 +1,5 @@
 """Tests for harry-potter."""
 
-import pytest
-from harry_potter import HarryPotter, calculate_price
 
 
 class TestHarryPotter:

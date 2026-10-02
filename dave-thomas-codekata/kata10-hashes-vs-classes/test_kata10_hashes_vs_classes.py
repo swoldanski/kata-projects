@@ -1,7 +1,5 @@
 """Tests for kata10-hashes-vs-classes."""
 
-import pytest
-from kata10_hashes_vs_classes import HashesVsClasses, Order
 
 
 class TestHashesVsClasses:

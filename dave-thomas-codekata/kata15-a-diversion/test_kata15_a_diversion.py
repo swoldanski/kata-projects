@@ -1,7 +1,5 @@
 """Tests for kata15-a-diversion."""
 
-import pytest
-from kata15_a_diversion import ADiversion, diversion
 
 
 class TestADiversion:

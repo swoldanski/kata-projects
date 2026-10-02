@@ -1,7 +1,5 @@
 """Tests for reversi."""
 
-import pytest
-from reversi import Reversi, ReversiGame
 
 
 class TestReversi:

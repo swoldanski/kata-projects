@@ -1,7 +1,5 @@
 """Tests for kata-inherit-data."""
 
-import pytest
-from kata_inherit_data import InheritData, Form
 
 
 class TestInheritData:

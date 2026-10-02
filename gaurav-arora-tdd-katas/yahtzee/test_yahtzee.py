@@ -1,7 +1,5 @@
 """Tests for yahtzee."""
 
-import pytest
-from yahtzee import Yahtzee, score_category
 
 
 class TestYahtzee:

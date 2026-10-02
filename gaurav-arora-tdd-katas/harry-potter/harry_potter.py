@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,16 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class HarryPotter:
     """Calculate price with discounts"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement HarryPotter")
-    
-    def calculate_price(self, books: List[int]) -> float:
+
+    def calculate_price(self, books: list[int]) -> float:
         """Calculate price with discounts"""
         raise NotImplementedError("Implement calculate_price")
 
 
 # Functional alternative (for simpler katas)
-def calculate_price(books: List[int]) -> float:
+def calculate_price(books: list[int]) -> float:
     """Calculate price with discounts"""
     raise NotImplementedError("Implement calculate_price")

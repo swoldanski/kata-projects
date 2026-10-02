@@ -1,7 +1,5 @@
 """Tests for game-of-life."""
 
-import pytest
-from game_of_life import GameOfLife, GameOfLife
 
 
 class TestGameOfLife:

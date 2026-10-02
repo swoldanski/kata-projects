@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,16 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class MineFields:
     """Generate minesweeper field"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement MineFields")
-    
-    def generate_field(self, width: int, height: int, mines: int) -> List[str]:
+
+    def generate_field(self, width: int, height: int, mines: int) -> list[str]:
         """Generate minesweeper field"""
         raise NotImplementedError("Implement generate_field")
 
 
 # Functional alternative (for simpler katas)
-def generate_field(width: int, height: int, mines: int) -> List[str]:
+def generate_field(width: int, height: int, mines: int) -> list[str]:
     """Generate minesweeper field"""
     raise NotImplementedError("Implement generate_field")

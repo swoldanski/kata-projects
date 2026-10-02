@@ -1,7 +1,5 @@
 """Tests for kata19-word-chains."""
 
-import pytest
-from kata19_word_chains import WordChains, word_chain
 
 
 class TestWordChains:

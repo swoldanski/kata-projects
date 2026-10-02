@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,6 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class GameOfLife:
     """Conway's Game of Life"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement GameOfLife")
-    
-    def GameOfLife(self, ) -> None:
-        """Conway's Game of Life"""
-        raise NotImplementedError("Implement GameOfLife")
-
-
-# Functional alternative (for simpler katas)
-def GameOfLife() -> None:
-    """Conway's Game of Life"""
-    raise NotImplementedError("Implement GameOfLife")

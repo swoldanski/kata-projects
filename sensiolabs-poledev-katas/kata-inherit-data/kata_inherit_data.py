@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,13 +18,10 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class InheritData:
     """Form inheritance with virtual fields"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement InheritData")
-    
-    def Form(self, ) -> None:
-        """Form inheritance with virtual fields"""
-        raise NotImplementedError("Implement Form")
+
 
 
 # Functional alternative (for simpler katas)

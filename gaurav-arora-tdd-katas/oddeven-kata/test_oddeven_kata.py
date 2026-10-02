@@ -1,7 +1,5 @@
 """Tests for oddeven-kata."""
 
-import pytest
-from oddeven_kata import OddEven, partition_oddeven
 
 
 class TestOddEven:

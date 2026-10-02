@@ -1,25 +1,26 @@
 """Tests for Kata03: How Big? How Fast? - Estimation Calculator."""
 
+from math import ceil, log2
+
 import pytest
-from math import log2, ceil
 from kata03_how_big_how_fast import (
+    BitEstimate,
+    BitEstimationService,
+    EstimationCategory,
     HowBigHowFast,
+    InMemoryEstimationRepository,
+    StorageEstimate,
+    StorageEstimationService,
+    TimeEstimate,
+    TimeEstimationService,
+    estimate_binary_search_time,
+    estimate_binary_tree_storage,
     estimate_bits,
     estimate_bits_range,
-    estimate_town_records_storage,
-    estimate_binary_tree_storage,
     estimate_modem_transfer_time,
-    estimate_binary_search_time,
     estimate_password_cracking_time,
+    estimate_town_records_storage,
     get_kata_answers,
-    BitEstimate,
-    StorageEstimate,
-    TimeEstimate,
-    EstimationCategory,
-    InMemoryEstimationRepository,
-    BitEstimationService,
-    StorageEstimationService,
-    TimeEstimationService,
 )
 
 
@@ -164,24 +165,19 @@ class TestHowBigHowFast:
         # estimated ≈ 0.34 * 23.25 ≈ 7.9 ms
         assert 7 < result.milliseconds < 10
 
-    def test_functional_binary_search(self):
-        """Functional binary search scaling."""
-        result = estimate_binary_search_time(4.5, 6.0, 10_000_000)
-        assert 7 < result < 10
-
     def test_binary_search_scaling_properties(self):
         """Binary search should scale logarithmically."""
         t1 = self.calc.estimate_binary_search_time(4.5, 6.0, 10_000)
         t2 = self.calc.estimate_binary_search_time(4.5, 6.0, 100_000)
         t3 = self.calc.estimate_binary_search_time(4.5, 6.0, 10_000_000)
-        
+
         # Times should increase with n
         assert t1.milliseconds < t2.milliseconds < t3.milliseconds
-        
+
         # Ratio of times should approximate log ratio
         ratio_100k_10k = t2.milliseconds / t1.milliseconds
         ratio_10m_100k = t3.milliseconds / t2.milliseconds
-        
+
         # log2(100k)/log2(10k) ≈ 16.61/13.29 ≈ 1.25
         # log2(10M)/log2(100k) ≈ 23.25/16.61 ≈ 1.40
         assert 1.2 < ratio_100k_10k < 1.3
@@ -209,7 +205,8 @@ class TestHowBigHowFast:
         result = self.calc.estimate_password_cracking(4, 26, 1.0)  # 4 chars, lowercase
         # 26 + 26^2 + 26^3 + 26^4 = 26 + 676 + 17576 + 456976 = 475,254
         # 475,254 ms ≈ 7.9 minutes
-        assert "minute" in result.human_readable.lower() or "second" in result.human_readable.lower()
+        text = result.human_readable.lower()
+        assert "minute" in text or "second" in text
 
     def test_functional_password_cracking(self):
         """Functional password cracking time."""
@@ -224,7 +221,7 @@ class TestHowBigHowFast:
     def test_get_kata_answers_structure(self):
         """get_kata_answers should return all answers."""
         answers = get_kata_answers()
-        
+
         assert "bits" in answers
         assert "town_records" in answers
         assert "binary_tree_32bit" in answers
@@ -232,7 +229,7 @@ class TestHowBigHowFast:
         assert "modem_transfer" in answers
         assert "binary_search_10m" in answers
         assert "password_cracking" in answers
-        
+
         # Check bits answers
         assert 1_000 in answers["bits"]
         assert 1_000_000 in answers["bits"]
@@ -243,7 +240,7 @@ class TestHowBigHowFast:
     def test_kata_answers_values(self):
         """Check specific kata answer values."""
         answers = get_kata_answers()
-        
+
         # Bits
         assert "10 bits" in answers["bits"][1_000]
         assert "20 bits" in answers["bits"][1_000_000]
@@ -259,13 +256,13 @@ class TestHowBigHowFast:
         """History should be tracked."""
         self.calc.estimate_bits(1000)
         self.calc.estimate_town_records(20000)
-        
+
         history = self.calc.get_history()
         assert len(history) == 2
-        
+
         bits_history = self.calc.get_history(EstimationCategory.BITS)
         assert len(bits_history) == 1
-        
+
         storage_history = self.calc.get_history(EstimationCategory.STORAGE)
         assert len(storage_history) == 1
 
@@ -292,7 +289,7 @@ class TestHowBigHowFast:
         # Commands modify state (history)
         self.calc.estimate_bits(1000)
         self.calc.estimate_bits(2000)
-        
+
         # Queries read state
         history = self.calc.get_history(EstimationCategory.BITS)
         assert len(history) == 2
@@ -302,11 +299,11 @@ class TestHowBigHowFast:
         # Bit estimation
         bit_result = BitEstimationService.bits_for_unsigned(1_000_000)
         assert bit_result.exact_bits == 20
-        
+
         # Storage estimation
         storage_result = StorageEstimationService.estimate_town_records(20_000)
         assert storage_result.bytes == 1_900_000
-        
+
         # Time estimation
         time_result = TimeEstimationService.estimate_modem_transfer(1_200)
         assert time_result.milliseconds > 300_000

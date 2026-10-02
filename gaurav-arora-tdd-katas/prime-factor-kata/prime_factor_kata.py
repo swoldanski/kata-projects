@@ -3,8 +3,9 @@
 Source: See README.md
 """
 
-from typing import List, Optional, Dict, Any, Tuple, Set
 
+
+from typing import Any  # noqa: F401  (generated stub shape)
 
 # TODO: Implement the kata here
 # Follow DDD, CQRS, Repository patterns with in-memory state
@@ -17,16 +18,16 @@ from typing import List, Optional, Dict, Any, Tuple, Set
 
 class PrimeFactor:
     """Return prime factors of n"""
-    
+
     def __init__(self):
         raise NotImplementedError("Implement PrimeFactor")
-    
-    def prime_factors(self, n: int) -> List[int]:
+
+    def prime_factors(self, n: int) -> list[int]:
         """Return prime factors of n"""
         raise NotImplementedError("Implement prime_factors")
 
 
 # Functional alternative (for simpler katas)
-def prime_factors(n: int) -> List[int]:
+def prime_factors(n: int) -> list[int]:
     """Return prime factors of n"""
     raise NotImplementedError("Implement prime_factors")

@@ -1,7 +1,5 @@
 """Tests for kata08-conflicting-objectives."""
 
-import pytest
-from kata08_conflicting_objectives import ConflictingObjectives, analyze_tradeoffs
 
 
 class TestConflictingObjectives:
