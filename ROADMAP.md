@@ -36,8 +36,6 @@ binding rules.
 
 ## Backlog
 
-- Kata01: Supermarket Pricing - Python implementation
-- Kata02: Karate Chop - Python implementation
 - Kata03: How Big? How Fast? - Python implementation
 - Kata04: Data Munging - Python implementation
 - Kata05: Bloom Filters - Python implementation
