@@ -1,5 +1,16 @@
 ## [Unreleased]
 
+## [0.3.4] - 2026-10-02
+
+### Added
+- **Kata04: Data Munging** — Weather/soccer data parsing with DRY fusion:
+  - Part One: Weather data parsing (min temperature spread)
+  - Part Two: Soccer data parsing (min goal difference)
+  - Part Three: DRY fusion with shared ColumnParser and generic min-finder
+  - Full DDD/CQRS/Repository architecture with LocalFileRepository
+  - 32 comprehensive tests covering parsing, DRY fusion, and architecture patterns
+  - Functional and class-based interfaces
+
 ## [0.3.3] - 2026-10-02
 
 ### Added
